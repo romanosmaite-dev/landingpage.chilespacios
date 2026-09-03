@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chilespacios | Arriendo de Bodegas y Minibodegas en Valdivia</title>
+
+<!-- ============================================================
+     SEO / Open Graph
+     ============================================================ -->
+<meta name="description" content="Arriendo de bodegas industriales y minibodegas en Valdivia. Guardia 24/7 y camaras perimetrales. Mas de 10 anos de experiencia. Av. Balmaceda 6555." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://www.chilespacios.cl/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="es_CL" />
+<meta property="og:title" content="Chilespacios | Bodegas y Minibodegas Seguras en Valdivia" />
+<meta property="og:description" content="Espacios a tu medida con seguridad 24/7 y excelente conectividad. Mas de 10 anos de experiencia." />
+<meta property="og:url" content="https://www.chilespacios.cl/" />
+<!-- Cuando tengas el logo/foto definitiva, agrega: <meta property="og:image" content="https://www.chilespacios.cl/img/og-chilespacios.jpg" /> -->
+
+<!-- Favicon: mismo isotipo del logo (bodega verde con porton amarillo) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 58 58'><path d='M0 49V19L29 9v40z' fill='%231B8A45'/><path d='M29 9l29 10v30H29z' fill='%2314793B'/><rect x='13.2' y='25.2' width='31.6' height='23.8' fill='%23ffffff'/><rect x='15' y='27' width='28' height='22' fill='%23F5C518'/></svg>" />
+
+<!-- Tipografia -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<!-- Tailwind CSS (CDN). Para produccion, ver README: build con Tailwind CLI. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  /* --------------------------------------------------------------
+     PALETA DE MARCA CHILESPACIOS
+     brand -> Verde (color principal: frescura, amplitud, confianza)
+     gold  -> Amarillo (acento y CTAs: botones y destacados)
+     gray  -> Neutros de Tailwind (gris claro = fondos, oscuro = textos)
+     Blanco como color de respiro y fondo dominante.
+
+     Colores tomados del logo oficial:
+       verde bodega  #16803C  (= brand-700)
+       amarillo porton #F5C518 (= gold-400)
+       gris del texto #2B2B2B  (~ gray-800)
+     -------------------------------------------------------------- */
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        colors: {
+          brand: { 50:'#f0fdf4', 100:'#dcfce7', 200:'#bbf7d0', 300:'#86efac', 400:'#4ade80', 500:'#22c55e', 600:'#16a34a', 700:'#16803C', 800:'#166534', 900:'#14532d', 950:'#052e16' },
+          gold:  { 50:'#fefce8', 100:'#fef9c3', 200:'#fef08a', 300:'#fbe14f', 400:'#F5C518', 500:'#dbae0c', 600:'#b08a08', 700:'#8d6d06', 800:'#6f5605' }
+        },
+        keyframes: {
+          fadeUp: { '0%': { opacity: '0', transform: 'translateY(24px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+        },
+        animation: { fadeUp: 'fadeUp .6s ease-out both' }
+      }
+    }
+  };
+</script>
+
+<style>
+  /* Scroll suave nativo + compensacion por el navbar sticky */
+  html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+
+  /* Fondo del hero: degradado verde + patron de rejilla (no depende de imagenes externas).
+     Para usar una foto real del recinto, descomenta la linea `background-image` marcada abajo
+     y deja el archivo en img/hero-bodegas.jpg */
+  .hero-bg {
+    background-color: #14532d;
+    background-image:
+      linear-gradient(125deg, rgba(20,83,45,.95) 0%, rgba(22,101,52,.90) 45%, rgba(5,46,22,.97) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1'%3E%3Cpath d='M0 40h80M40 0v80'/%3E%3Cpath d='M0 0h80v80H0z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: cover, 80px 80px;
+    background-position: center, center;
+    /* background-image: linear-gradient(125deg, rgba(20,83,45,.93), rgba(5,46,22,.93)), url('img/hero-bodegas.jpg'); */
+  }
+
+  /* Revelado al hacer scroll (IntersectionObserver mas abajo) */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease-out, transform .6s ease-out; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* Foco visible y accesible en toda la pagina */
+  :focus-visible { outline: 3px solid #dbae0c; outline-offset: 2px; border-radius: 4px; }
+
+  /* ------------------------------------------------------------
+     WORDMARK DEL LOGO
+     El bajada "BODEGAS Y LOGISTICA" va justificada al ancho de
+     "CHILESPACIOS", igual que en el logo original.
+     ------------------------------------------------------------ */
+  /* Archivo es la grotesca pesada mas parecida a la del logo original.
+     Inter queda de respaldo si la fuente no alcanza a cargar. */
+  .logo-word,
+  .logo-tag    { font-family: 'Archivo', 'Inter', system-ui, sans-serif; }
+  .logo-word   { font-weight: 900; letter-spacing: -.015em; line-height: .95; }
+  .logo-tag    { font-weight: 800; line-height: 1; }
+
+  /* ------------------------------------------------------------
+     GALERIA - marcador de foto faltante
+     Si el archivo de img/ todavia no existe, en vez de un icono
+     roto se muestra una placa verde con el nombre esperado.
+     ------------------------------------------------------------ */
+  .img-missing { background: repeating-linear-gradient(45deg, #f0fdf4, #f0fdf4 14px, #dcfce7 14px, #dcfce7 28px); }
+  .img-missing img,
+  .img-missing figcaption { display: none; }
+  .img-missing::after {
+    content: "Falta " attr(data-file);
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    padding: 1rem; text-align: center; font-size: .8rem; font-weight: 700; color: #166534;
+  }
+</style>
+</head>
+
+<body class="font-sans bg-white text-gray-700 antialiased">
+
+<!-- Salto de accesibilidad -->
+<a href="#inicio" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-3 focus:left-3 focus:bg-brand-900 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Saltar al contenido</a>
+
+<!-- ============================================================
+     1. HEADER / NAVBAR
+     Fondo blanco: permite montar el logo original (negro) sin
+     necesidad de una version invertida.
+     ============================================================ -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200 transition-shadow duration-300">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <nav class="flex h-16 lg:h-20 items-center justify-between gap-4" aria-label="Navegacion principal">
+
+      <!-- ===== LOGO (HEADER) =====================================
+           Isotipo reconstruido como SVG vectorial: nitido a cualquier
+           tamano, sin peticiones de red. Si prefieres montar el archivo
+           original, deja el PNG/SVG en img/logo-chilespacios.png,
+           descomenta la etiqueta img y borra el bloque del isotipo
+           junto con el del wordmark.
+           ========================================================= -->
+      <!-- El marco gris rectangular es parte del encuadre oficial del logo -->
+      <a href="#inicio" class="flex items-center gap-2.5 lg:gap-3 shrink-0 border-2 border-gray-400 px-3 py-1.5 lg:px-4 lg:py-2" aria-label="Chilespacios - Bodegas y Logistica">
+        <!-- <img src="img/logo-chilespacios.png" alt="Chilespacios - Bodegas y Logistica" class="h-10 lg:h-12 w-auto" /> -->
+
+        <!-- Isotipo: bodega verde con porton amarillo -->
+        <svg class="h-8 w-auto lg:h-10 shrink-0" viewBox="0 0 58 40" fill="none" aria-hidden="true">
+          <!-- Mitad izquierda (verde claro) y derecha (verde oscuro): el quiebre
+               en la cumbrera da el volumen del logo original. -->
+          <path d="M0 40V10L29 0v40z" fill="#1B8A45"/>
+          <path d="M29 0l29 10v30H29z" fill="#14793B"/>
+          <!-- Porton: marco blanco + hoja amarilla, ambos al ras del suelo -->
+          <rect x="13.2" y="16.2" width="31.6" height="23.8" fill="#ffffff"/>
+          <rect x="15" y="18" width="28" height="22" fill="#F5C518"/>
+        </svg>
+
+        <!-- Wordmark -->
+        <span class="block">
+          <span class="logo-word block text-lg lg:text-2xl text-gray-800">CHILESPACIOS</span>
+          <span class="logo-tag block mt-1 text-[0.5rem] lg:text-[0.64rem] tracking-[0.185em] text-gray-800">BODEGAS Y LOG&Iacute;STICA</span>
+        </span>
+      </a>
+
+      <!-- Menu escritorio -->
+      <ul class="hidden lg:flex items-center gap-1 text-sm font-semibold">
+        <li><a href="#inicio"       class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:text-brand-700 hover:bg-brand-50 transition">Inicio</a></li>
+        <li><a href="#industriales" class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:text-brand-700 hover:bg-brand-50 transition">Bodegas Industriales</a></li>
+        <li><a href="#minibodegas"  class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:text-brand-700 hover:bg-brand-50 transition">Minibodegas</a></li>
+        <li><a href="#servicios"    class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:text-brand-700 hover:bg-brand-50 transition">Servicios</a></li>
+        <li><a href="#ubicacion"    class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:text-brand-700 hover:bg-brand-50 transition">Ubicaci&oacute;n</a></li>
+        <li><a href="#contacto"     class="nav-link px-3 py-2 rounded-lg text-gray-600 hover:text-brand-700 hover:bg-brand-50 transition">Contacto</a></li>
+      </ul>
+
+      <!-- CTA escritorio -->
+      <div class="hidden lg:flex items-center gap-4">
+        <a href="tel:+56000000000" class="js-tel text-sm font-bold text-brand-800 hover:text-brand-600 transition" aria-label="Llamar por telefono">
+          <span class="js-tel-label">+56 9 0000 0000</span>
+        </a>
+        <button type="button" data-open-modal
+                class="inline-flex items-center gap-2 rounded-xl bg-gold-400 px-5 py-2.5 text-sm font-extrabold text-brand-950 shadow-lg shadow-gold-400/30 hover:bg-gold-300 active:scale-[.98] transition">
+          Cotizar Ahora
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h9.19L9.72 6.03a.75.75 0 1 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+
+      <!-- Boton hamburguesa (movil) -->
+      <button type="button" id="menu-toggle" aria-expanded="false" aria-controls="mobile-menu"
+              class="lg:hidden inline-flex items-center justify-center rounded-lg p-2.5 text-brand-900 hover:bg-brand-50 transition">
+        <span class="sr-only">Abrir men&uacute; de navegaci&oacute;n</span>
+        <svg id="icon-open"  class="h-6 w-6"        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg id="icon-close" class="h-6 w-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Menu movil desplegable -->
+  <div id="mobile-menu" class="lg:hidden hidden border-t border-gray-200 bg-white shadow-lg">
+    <ul class="px-4 py-4 space-y-1 text-base font-semibold">
+      <li><a href="#inicio"       class="mobile-link block rounded-lg px-3 py-3 text-gray-700 hover:bg-brand-50 hover:text-brand-700">Inicio</a></li>
+      <li><a href="#industriales" class="mobile-link block rounded-lg px-3 py-3 text-gray-700 hover:bg-brand-50 hover:text-brand-700">Bodegas Industriales</a></li>
+      <li><a href="#minibodegas"  class="mobile-link block rounded-lg px-3 py-3 text-gray-700 hover:bg-brand-50 hover:text-brand-700">Minibodegas</a></li>
+      <li><a href="#servicios"    class="mobile-link block rounded-lg px-3 py-3 text-gray-700 hover:bg-brand-50 hover:text-brand-700">Servicios</a></li>
+      <li><a href="#ubicacion"    class="mobile-link block rounded-lg px-3 py-3 text-gray-700 hover:bg-brand-50 hover:text-brand-700">Ubicaci&oacute;n</a></li>
+      <li><a href="#contacto"     class="mobile-link block rounded-lg px-3 py-3 text-gray-700 hover:bg-brand-50 hover:text-brand-700">Contacto</a></li>
+      <li class="pt-2">
+        <button type="button" data-open-modal class="w-full rounded-xl bg-gold-400 px-5 py-3.5 font-extrabold text-brand-950 shadow-lg hover:bg-gold-300 transition">
+          Cotizar Ahora
+        </button>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================
+     2. HERO
+     ============================================================ -->
+<section id="inicio" class="hero-bg relative isolate pt-28 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+  <!-- Halo decorativo amarillo -->
+  <div class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-gold-400/20 blur-3xl" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+
+      <!-- Copy principal -->
+      <div class="lg:col-span-7 animate-fadeUp">
+        <p class="inline-flex items-center gap-2 rounded-full bg-white/10 ring-1 ring-white/25 px-4 py-1.5 text-xs sm:text-sm font-semibold text-gold-300">
+          <span class="relative flex h-2 w-2">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-300 opacity-75"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-gold-400"></span>
+          </span>
+          Unidades disponibles en Valdivia
+        </p>
+
+        <h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.08]">
+          Arriendo de bodegas y minibodegas
+          <span class="text-gold-400">con seguridad</span> en Valdivia
+        </h1>
+
+        <p class="mt-6 max-w-2xl text-lg sm:text-xl leading-relaxed text-brand-100">
+          Espacios a tu medida con seguridad 24/7 y la mejor conectividad.
+          Contamos con 10 a&ntilde;os de experiencia.
+        </p>
+
+        <!-- CTAs primarios: una via por cada tipo de espacio + la cotizacion -->
+        <div class="mt-9 flex flex-col sm:flex-row sm:flex-wrap gap-4">
+          <a href="#minibodegas"
+             class="inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-4 text-base font-extrabold text-brand-950 shadow-xl shadow-black/20 hover:bg-gold-300 active:scale-[.98] transition">
+            Ver Minibodegas
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v9.19l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd"/></svg>
+          </a>
+          <a href="#industriales"
+             class="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/35 px-7 py-4 text-base font-bold text-white backdrop-blur hover:bg-white/20 active:scale-[.98] transition">
+            Ver Bodegas
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v9.19l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd"/></svg>
+          </a>
+          <button type="button" data-open-modal
+                  class="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 ring-1 ring-white/35 px-7 py-4 text-base font-bold text-white backdrop-blur hover:bg-white/20 active:scale-[.98] transition">
+            Solicitar Cotizaci&oacute;n
+          </button>
+        </div>
+
+        <!-- Micro-prueba social -->
+        <dl class="mt-12 grid grid-cols-3 gap-4 max-w-lg border-t border-white/20 pt-8">
+          <div>
+            <dt class="sr-only">A&ntilde;os de experiencia</dt>
+            <dd class="text-3xl font-extrabold text-white">10<span class="text-gold-400">+</span></dd>
+            <p class="mt-1 text-xs sm:text-sm text-brand-200">A&ntilde;os de experiencia</p>
+          </div>
+          <div>
+            <dt class="sr-only">Vigilancia</dt>
+            <dd class="text-3xl font-extrabold text-white">24/7</dd>
+            <p class="mt-1 text-xs sm:text-sm text-brand-200">Guardia presencial</p>
+          </div>
+          <div>
+            <dt class="sr-only">Superficie minima</dt>
+            <dd class="text-3xl font-extrabold text-white">7<span class="text-gold-400">m&sup2;</span></dd>
+            <p class="mt-1 text-xs sm:text-sm text-brand-200">Desde, escalable</p>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Tarjeta lateral: cotizacion express -->
+      <div class="lg:col-span-5 animate-fadeUp" style="animation-delay:.15s">
+        <!-- Foto aerea del recinto. El marco es 4:5, la misma proporcion del
+             archivo, para que no se recorte nada. Usa el mismo aviso de imagen
+             faltante que la galeria: si el archivo no esta, se ve una placa con
+             el nombre esperado en vez de un icono roto. -->
+        <figure class="relative overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/20 aspect-[4/5]"
+                data-file="img/vista-satelital.jpg">
+          <img src="img/vista-satelital.jpg" onerror="this.parentElement.classList.add('img-missing')"
+               alt="Vista aerea de una fila de bodegas de Chilespacios, con revestimiento verde y amarillo, alero corrido y calle de hormigon para carga y descarga"
+               decoding="async"
+               class="h-full w-full object-cover" />
+          <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 sm:p-6">
+            <p class="text-sm font-extrabold text-white">Av. Balmaceda 6555, Valdivia</p>
+            <p class="mt-1 text-xs text-white/80">Calles de hormig&oacute;n y acceso directo a cada bodega.</p>
+          </figcaption>
+        </figure>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. SEGURIDAD Y CONFIANZA
+     ============================================================ -->
+<section id="seguridad" class="py-20 lg:py-28 bg-gray-50">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    <header class="max-w-3xl mx-auto text-center reveal">
+      <p class="text-sm font-bold uppercase tracking-[0.18em] text-brand-600">Seguridad y confianza</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
+        Tu mercader&iacute;a protegida, todos los d&iacute;as del a&ntilde;o
+      </h2>
+      <p class="mt-4 text-lg text-gray-600">
+        Un condominio cerrado, vigilado y pensado para operar con comodidad: desde una caja de recuerdos
+        hasta la log&iacute;stica completa de tu empresa.
+      </p>
+    </header>
+
+    <!-- Cuatro pilares de seguridad. Icono circular de trazo, titulo en verde
+         de marca y bajada breve, siguiendo el estilo de tarjeta solicitado. -->
+    <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+      <!-- Card: vigilancia -->
+      <li class="reveal group rounded-2xl bg-white p-8 text-center ring-1 ring-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300">
+        <span class="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full text-brand-700 ring-1 ring-gray-200 group-hover:bg-brand-700 group-hover:text-white group-hover:ring-brand-700 transition">
+          <!-- Guardia con gorra -->
+          <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 8h10"/>
+            <path d="M8 8a4 4 0 0 1 8 0"/>
+            <path d="M12 4.4v1.3"/>
+            <path d="M9.2 9.3v.9a2.8 2.8 0 0 0 5.6 0v-.9"/>
+            <path d="M4.5 21v-2.1a3 3 0 0 1 2-2.8l3-1.1 2.5 2.6 2.5-2.6 3 1.1a3 3 0 0 1 2 2.8V21"/>
+            <path d="M12 17.6V21"/>
+          </svg>
+        </span>
+        <h3 class="mt-6 text-lg font-extrabold text-brand-700">Vigilancia</h3>
+        <p class="mt-2.5 text-sm leading-relaxed text-gray-600">
+          24 horas del d&iacute;a, los 365 d&iacute;as del a&ntilde;o.
+        </p>
+      </li>
+
+      <!-- Card: accesos controlados -->
+      <li class="reveal group rounded-2xl bg-white p-8 text-center ring-1 ring-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300" style="transition-delay:.06s">
+        <span class="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full text-brand-700 ring-1 ring-gray-200 group-hover:bg-brand-700 group-hover:text-white group-hover:ring-brand-700 transition">
+          <!-- Caseta de control con barrera -->
+          <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 21h20"/>
+            <path d="M4 21V7.5L8.5 5 13 7.5V21"/>
+            <path d="M6.5 10.5h4M6.5 13.5h4"/>
+            <path d="M17 21v-4.6"/>
+            <circle cx="17" cy="14.8" r="1.5"/>
+            <path d="M18.4 13.9 22 12"/>
+          </svg>
+        </span>
+        <h3 class="mt-6 text-lg font-extrabold text-brand-700">Accesos controlados</h3>
+        <p class="mt-2.5 text-sm leading-relaxed text-gray-600">
+          Control con guardia en la entrada del condominio.
+        </p>
+      </li>
+
+      <!-- Card: video vigilancia -->
+      <li class="reveal group rounded-2xl bg-white p-8 text-center ring-1 ring-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300" style="transition-delay:.12s">
+        <span class="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full text-brand-700 ring-1 ring-gray-200 group-hover:bg-brand-700 group-hover:text-white group-hover:ring-brand-700 transition">
+          <!-- Central de monitoreo -->
+          <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2.5" y="4" width="19" height="13.5" rx="2"/>
+            <path d="M8.5 21h7M12 17.5V21"/>
+            <circle cx="8.6" cy="9" r="1.6"/>
+            <path d="M6 13.6a2.8 2.8 0 0 1 5.2 0"/>
+            <path d="M14.5 8h4.2M14.5 11h4.2M14.5 14h2.6"/>
+          </svg>
+        </span>
+        <h3 class="mt-6 text-lg font-extrabold text-brand-700">Video Vigilancia</h3>
+        <p class="mt-2.5 text-sm leading-relaxed text-gray-600">
+          Central de circuito cerrado con c&aacute;maras en todo el per&iacute;metro y grabaci&oacute;n continua.
+        </p>
+      </li>
+
+      <!-- Card: experiencia -->
+      <li class="reveal group rounded-2xl bg-white p-8 text-center ring-1 ring-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300" style="transition-delay:.18s">
+        <span class="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-full text-brand-700 ring-1 ring-gray-200 group-hover:bg-brand-700 group-hover:text-white group-hover:ring-brand-700 transition">
+          <!-- Medalla -->
+          <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/>
+            <path d="M8.6 13.8 7 22l5-3 5 3-1.6-8.2"/>
+          </svg>
+        </span>
+        <h3 class="mt-6 text-lg font-extrabold text-brand-700">10+ a&ntilde;os de experiencia</h3>
+        <p class="mt-2.5 text-sm leading-relaxed text-gray-600">
+          M&aacute;s de una d&eacute;cada resguardando la mercader&iacute;a de empresas y particulares en Valdivia.
+        </p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. NUESTRO CONDOMINIO (GALERIA)
+     Las fotos van en la carpeta img/ con estos nombres exactos.
+     Si un archivo falta, la tarjeta muestra un marcador con el
+     nombre esperado en vez de un icono roto.
+     ============================================================ -->
+<section id="condominio" class="py-20 lg:py-28 bg-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    <header class="max-w-3xl mx-auto text-center reveal">
+      <p class="text-sm font-bold uppercase tracking-[0.18em] text-brand-600">Nuestro condominio</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
+        Instalaciones eficientes, pensadas para operar
+      </h2>
+      <p class="mt-4 text-lg text-gray-600">
+        Calles amplias de hormig&oacute;n, accesos directos a cada bodega y un recinto cerrado
+        con vigilancia permanente. As&iacute; se ve Chilespacios por dentro.
+      </p>
+    </header>
+
+    <!-- Grilla asimetrica: 7/5 y 5/7 en escritorio, apilada en movil -->
+    <div class="mt-14 grid gap-4 sm:gap-6 lg:grid-cols-12">
+
+      <!-- Foto 1 -->
+      <figure class="gallery-item reveal relative lg:col-span-7 overflow-hidden rounded-2xl ring-1 ring-gray-200 shadow-sm aspect-[4/3] group cursor-zoom-in"
+              data-file="img/condominio-1.jpg" data-caption="Frente de bodegas con portones de acceso vehicular directo">
+        <img src="img/condominio-1.jpg" onerror="this.parentElement.classList.add('img-missing')"
+             alt="Fachada de las bodegas de Chilespacios, con portones verdes de acceso y calle interior de hormigon"
+             loading="lazy" decoding="async"
+             class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5 text-sm font-semibold text-white">
+          Portones de acceso vehicular directo a cada bodega
+        </figcaption>
+      </figure>
+
+      <!-- Foto 2 -->
+      <figure class="gallery-item reveal relative lg:col-span-5 overflow-hidden rounded-2xl ring-1 ring-gray-200 shadow-sm aspect-[4/3] group cursor-zoom-in"
+              data-file="img/condominio-2.jpg" data-caption="Vista aerea del condominio y sus patios de maniobra">
+        <img src="img/condominio-2.jpg" onerror="this.parentElement.classList.add('img-missing')"
+             alt="Vista aerea del condominio Chilespacios, mostrando las naves, el patio de maniobras y los estacionamientos"
+             loading="lazy" decoding="async"
+             class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5 text-sm font-semibold text-white">
+          Vista a&eacute;rea del recinto
+        </figcaption>
+      </figure>
+
+      <!-- Foto 3 -->
+      <figure class="gallery-item reveal relative lg:col-span-5 overflow-hidden rounded-2xl ring-1 ring-gray-200 shadow-sm aspect-[4/3] group cursor-zoom-in"
+              data-file="img/condominio-3.jpg" data-caption="Calles interiores con espacio de maniobra para camiones">
+        <img src="img/condominio-3.jpg" onerror="this.parentElement.classList.add('img-missing')"
+             alt="Calle interior del condominio con camiones estacionados entre dos filas de bodegas, con el entorno de Valdivia al fondo"
+             loading="lazy" decoding="async"
+             class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5 text-sm font-semibold text-white">
+          Espacio de maniobra para camiones
+        </figcaption>
+      </figure>
+
+      <!-- Foto 4 -->
+      <figure class="gallery-item reveal relative lg:col-span-7 overflow-hidden rounded-2xl ring-1 ring-gray-200 shadow-sm aspect-[4/3] group cursor-zoom-in"
+              data-file="img/condominio-4.jpg" data-caption="Modulos con cortinas de acero automaticas">
+        <img src="img/condominio-4.jpg" onerror="this.parentElement.classList.add('img-missing')"
+             alt="Fila de bodegas de Chilespacios con cortinas de acero automaticas y revestimiento galvanizado"
+             loading="lazy" decoding="async"
+             class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5 text-sm font-semibold text-white">
+          Cortinas de acero autom&aacute;ticas en cada m&oacute;dulo
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="mt-12 text-center reveal">
+      <p class="text-gray-600">&iquest;Quieres conocerlo en persona?</p>
+      <button type="button" data-open-modal
+              class="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-4 text-base font-extrabold text-brand-950 shadow-lg shadow-gold-400/30 hover:bg-gold-300 active:scale-[.98] transition">
+        Agendar una visita
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h9.19L9.72 6.03a.75.75 0 1 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. BODEGAS INDUSTRIALES (B2B)
+     ============================================================ -->
+<section id="industriales" class="py-20 lg:py-28 bg-brand-900 text-white relative overflow-hidden">
+  <div class="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-gold-400/10 blur-3xl" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+
+    <!-- Encabezado -->
+    <header class="max-w-3xl reveal">
+      <p class="text-sm font-bold uppercase tracking-[0.18em] text-gold-400">Soluciones B2B</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">
+        Bodegas Industriales a la medida de tu operaci&oacute;n
+      </h2>
+      <p class="mt-4 text-lg text-brand-100">
+        Espacios modulables <strong class="font-bold text-white">desde los 240 m&sup2;</strong>, con posibilidad
+        de construir oficinas en el interior. Construcci&oacute;n s&oacute;lida, pensada para
+        almacenamiento en altura y operaci&oacute;n log&iacute;stica intensiva.
+      </p>
+    </header>
+
+    <!-- Anuncio de la proxima etapa: formato mas chico, para captar interes
+         antes de que este construida. -->
+    <div class="reveal mt-10 rounded-2xl bg-gold-400/10 ring-1 ring-gold-400/40 p-6 sm:p-8">
+      <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div class="flex items-start gap-5">
+          <span class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold-400 text-brand-950" aria-hidden="true">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M12 12v6M9 15h6"/></svg>
+          </span>
+          <div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-gold-400 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-brand-950">
+              Pr&oacute;xima etapa
+            </span>
+            <h3 class="mt-3 text-xl sm:text-2xl font-extrabold text-white">
+              Nuevas bodegas desde <span class="text-gold-400">132 m&sup2;</span>
+            </h3>
+            <p class="mt-2 max-w-xl text-sm sm:text-base text-brand-100">
+              Estamos a portas de construir una nueva etapa de bodegas industriales en nuestro
+              condominio, cont&aacute;ctate con nosotros y proyecta tu bodega desde los
+              132 metros cuadrados en adelante.
+            </p>
+          </div>
+        </div>
+
+        <button type="button" data-open-modal data-tipo="Bodega Industrial pr&oacute;x. etapa (desde 132 m&sup2;)"
+                class="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-6 py-3.5 text-sm font-extrabold text-brand-950 shadow-lg shadow-black/20 hover:bg-gold-300 active:scale-[.98] transition">
+          Quiero m&aacute;s informaci&oacute;n
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h9.19L9.72 6.03a.75.75 0 1 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-14 grid lg:grid-cols-2 gap-14 items-start">
+
+      <!-- Especificaciones tecnicas -->
+      <div class="reveal">
+        <h3 class="text-sm font-bold uppercase tracking-[0.18em] text-brand-200">Especificaciones t&eacute;cnicas</h3>
+
+        <ul class="mt-6 grid sm:grid-cols-2 gap-5">
+
+          <!-- Estructura -->
+          <li class="rounded-2xl bg-white/5 ring-1 ring-white/15 p-6 hover:bg-white/10 transition">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gold-400 text-brand-950" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8h14v13"/><path d="M5 12h14M5 16h14M9 8V4h6v4"/></svg>
+            </span>
+            <h4 class="mt-4 font-bold text-white">Estructura</h4>
+            <p class="mt-2 text-sm leading-relaxed text-brand-100">
+              Hormig&oacute;n armado y alba&ntilde;iler&iacute;a, que garantiza hermeticidad y m&aacute;xima seguridad.
+            </p>
+          </li>
+
+          <!-- Almacenamiento -->
+          <li class="rounded-2xl bg-white/5 ring-1 ring-white/15 p-6 hover:bg-white/10 transition">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gold-400 text-brand-950" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18M20 3v18M4 9h16M4 15h16M4 21h16M4 3h16"/><path d="M9 5.5h2M13 11.5h2M9 17.5h2"/></svg>
+            </span>
+            <h4 class="mt-4 font-bold text-white">Almacenamiento</h4>
+            <p class="mt-2 text-sm leading-relaxed text-brand-100">
+              Dise&ntilde;adas para la colocaci&oacute;n de sistemas de Rack, con altura de hombro
+              de <strong class="font-bold text-gold-300">7 metros</strong>.
+            </p>
+          </li>
+
+          <!-- Pisos -->
+          <li class="rounded-2xl bg-white/5 ring-1 ring-white/15 p-6 hover:bg-white/10 transition">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gold-400 text-brand-950" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M3 12h18M3 7h18"/><path d="M8 7v5M16 12v5"/></svg>
+            </span>
+            <h4 class="mt-4 font-bold text-white">Pisos</h4>
+            <p class="mt-2 text-sm leading-relaxed text-brand-100">
+              Pavimentos de hormig&oacute;n pulido con helic&oacute;ptero, de alta resistencia
+              al tr&aacute;nsito y la carga.
+            </p>
+          </li>
+
+          <!-- Cerramientos y accesos -->
+          <li class="rounded-2xl bg-white/5 ring-1 ring-white/15 p-6 hover:bg-white/10 transition">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gold-400 text-brand-950" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M4 7h16M4 11h16M4 15h16"/><path d="M10 19h4"/></svg>
+            </span>
+            <h4 class="mt-4 font-bold text-white">Cerramientos y accesos</h4>
+            <p class="mt-2 text-sm leading-relaxed text-brand-100">
+              Revestimiento con acero galvanizado y cortinas de acero el&eacute;ctricas autom&aacute;ticas.
+            </p>
+          </li>
+        </ul>
+
+        <div class="mt-9">
+          <button type="button" data-open-modal data-tipo="Bodega Industrial"
+                  class="inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-7 py-4 text-base font-extrabold text-brand-950 shadow-xl shadow-black/20 hover:bg-gold-300 active:scale-[.98] transition">
+            Cotizar Bodega Industrial
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h9.19L9.72 6.03a.75.75 0 1 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Esquema + ficha resumen -->
+      <div class="reveal">
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/15 p-8">
+
+          <!-- Esquema de altura -->
+          <div class="rounded-xl bg-brand-950/60 p-6 ring-1 ring-white/10">
+            <svg viewBox="0 0 320 200" class="w-full h-auto" role="img" aria-label="Esquema de bodega industrial con altura de hombro de 7 metros para sistemas de rack">
+              <defs>
+                <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#166534"/><stop offset="100%" stop-color="#052e16"/>
+                </linearGradient>
+              </defs>
+              <!-- Suelo (hormigon pulido) -->
+              <line x1="20" y1="175" x2="300" y2="175" stroke="#9ca3af" stroke-width="3"/>
+              <!-- Nave -->
+              <path d="M60 175V70l90-40 90 40v105z" fill="url(#wall)" stroke="#F5C518" stroke-width="2.5" stroke-linejoin="round"/>
+              <!-- Racks interiores -->
+              <g stroke="#4ade80" stroke-width="1.6" opacity=".85">
+                <path d="M78 175V96h26v79M78 122h26M78 148h26"/>
+                <path d="M196 175V96h26v79M196 122h26M196 148h26"/>
+              </g>
+              <!-- Cortina de acero electrica -->
+              <rect x="122" y="112" width="56" height="63" rx="2" fill="#052e16" stroke="#F5C518" stroke-width="2"/>
+              <g stroke="#22c55e" stroke-width="1.4" opacity=".8">
+                <path d="M122 124h56M122 136h56M122 148h56M122 160h56"/>
+              </g>
+              <!-- Cota de altura de hombro: se mide desde el suelo (y=175) hasta el
+                   encuentro de muro y techo (y=70), NO hasta la cumbrera (y=30). -->
+              <!-- Linea auxiliar que marca el hombro -->
+              <line x1="240" y1="70" x2="284" y2="70" stroke="#F5C518" stroke-width="1" stroke-dasharray="3 3" opacity=".7"/>
+              <line x1="272" y1="70" x2="272" y2="175" stroke="#F5C518" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <path d="M268 76l4-6 4 6M268 169l4 6 4-6" fill="#F5C518"/>
+              <text x="281" y="127" fill="#fde047" font-family="Inter, sans-serif" font-size="14" font-weight="800">7 m</text>
+              <!-- Cota de ancho -->
+              <line x1="60" y1="188" x2="240" y2="188" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <text x="150" y="184" fill="#d1d5db" font-family="Inter, sans-serif" font-size="11" text-anchor="middle">M&#243;dulo ampliable</text>
+            </svg>
+          </div>
+
+          <dl class="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-white/15 text-sm">
+            <div class="bg-brand-900 p-4"><dt class="text-brand-200">Superficie base</dt><dd class="mt-1 font-bold text-white">Desde 240 m&sup2;</dd></div>
+            <div class="bg-brand-900 p-4"><dt class="text-brand-200">Altura de hombro</dt><dd class="mt-1 font-bold text-white">7 m</dd></div>
+            <div class="bg-brand-900 p-4"><dt class="text-brand-200">Oficinas interiores</dt><dd class="mt-1 font-bold text-white">Construibles</dd></div>
+            <div class="bg-brand-900 p-4"><dt class="text-brand-200">Accesos</dt><dd class="mt-1 font-bold text-white">Cortina el&eacute;ctrica</dd></div>
+          </dl>
+
+          <p class="mt-5 text-xs text-brand-300">
+            Los valores de arriendo industrial se cotizan seg&uacute;n superficie, plazo de contrato
+            y habilitaciones requeridas.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6. MINIBODEGAS (B2C / PYMES) - Planes
+     ============================================================ -->
+<section id="minibodegas" class="py-20 lg:py-28 bg-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    <header class="max-w-3xl mx-auto text-center reveal">
+      <p class="text-sm font-bold uppercase tracking-[0.18em] text-brand-600">Minibodegas</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
+        Elige los m&sup2; que necesitas
+      </h2>
+      <p class="mt-4 text-lg text-gray-600">
+        Ideal para mudanzas, stock de e-commerce, herramientas, archivos o el inventario de tu pyme.
+        Contrato flexible y acceso directo a tu unidad.
+      </p>
+    </header>
+
+    <!-- Tarjetas de planes.
+         Cada minibodega es un contenedor, ilustrado en isometrico con la
+         longitud proporcional a su tamano: cubo (7), medio (14) y largo (28).
+         Paleta del contenedor: azul petroleo (tres tonos para dar volumen). -->
+    <div class="mt-16 grid gap-8 lg:grid-cols-3 lg:items-center">
+
+      <!-- ============ Plan 7 m2 ============ -->
+      <article class="reveal flex flex-col rounded-2xl bg-gray-50 p-8 text-center ring-1 ring-gray-200 hover:shadow-xl hover:ring-brand-200 transition duration-300">
+
+        <!-- Contenedor 7 m2 (cubo) -->
+        <svg viewBox="0 0 220 150" class="mx-auto w-full max-w-[210px] h-auto" role="img" aria-label="Contenedor de 7 metros cuadrados">
+          <!-- Sombra -->
+          <ellipse cx="110" cy="128" rx="60" ry="9" fill="#0f172a" opacity=".07"/>
+          <!-- Cara superior -->
+          <path d="M110 80 58 54l52-26 52 26z" fill="#2E7F91"/>
+          <!-- Cara izquierda (costado corrugado) -->
+          <path d="M110 120 58 94V54l52 26z" fill="#1C5B69"/>
+          <!-- Cara derecha (puertas) -->
+          <path d="M110 120l52-26V54l-52 26z" fill="#123E48"/>
+          <!-- Corrugado del costado -->
+          <g stroke="#2E7F91" stroke-width="1.6" opacity=".55">
+            <path d="M101.3 115.7v-40M92.7 111.3v-40M84 107V67M75.3 102.7v-40M66.7 98.3v-40"/>
+          </g>
+          <!-- Puertas -->
+          <g stroke="#2E7F91" stroke-width="1.6" opacity=".5">
+            <path d="M123 113.5v-40M136 107V67M149 100.5v-40"/>
+          </g>
+          <!-- Manillas -->
+          <g stroke="#F5C518" stroke-width="2.2" stroke-linecap="round">
+            <path d="M131 95.5v-9M141 90.5v-9"/>
+          </g>
+          <!-- Nervios del techo -->
+          <g stroke="#4BA3B6" stroke-width="1.4" opacity=".45">
+            <path d="M127.3 71.3 75.3 45.3M144.7 62.7 92.7 36.7"/>
+          </g>
+          <!-- Contorno -->
+          <path d="M110 80 58 54l52-26 52 26zM110 120 58 94V54M110 120l52-26V54M110 80v40" fill="none" stroke="#0B2E36" stroke-width="1.6" stroke-linejoin="round"/>
+          <!-- Persona de referencia junto a las puertas (aprox. 1,70 m) -->
+          <g>
+            <ellipse cx="176" cy="117" rx="7.5" ry="2.2" fill="#0f172a" opacity=".12"/>
+            <circle cx="176" cy="91.3" r="3.4" fill="#334155"/>
+            <rect x="171.4" y="96.4" width="9.2" height="9.8" rx="3.4" fill="#334155"/>
+            <rect x="171.8" y="106" width="3.4" height="10" rx="1.4" fill="#334155"/>
+            <rect x="176.8" y="106" width="3.4" height="10" rx="1.4" fill="#334155"/>
+          </g>
+        </svg>
+
+        <p class="mt-6 text-lg font-bold text-gray-800">
+          7,0 m&sup2; <span class="mx-1 text-gray-300">/</span> 16,7 m&sup3;
+        </p>
+
+        <p class="mt-5 text-2xl font-extrabold tracking-tight text-brand-700">Consulta el valor</p>
+        <p class="mt-1 text-sm text-gray-500">Cotizaci&oacute;n sin costo ni compromiso</p>
+
+        <button type="button" data-open-modal data-tipo="Minibodega 7 m&sup2;"
+                class="mt-7 w-full rounded-full bg-gold-400 px-5 py-3.5 font-extrabold text-brand-950 shadow-lg shadow-gold-400/25 hover:bg-gold-300 active:scale-[.98] transition">
+          Reservar 7 m&sup2;
+        </button>
+      </article>
+
+      <!-- ============ Plan 14 m2 - DESTACADO ============ -->
+      <article class="reveal relative flex flex-col rounded-2xl bg-brand-800 p-8 text-center text-white shadow-2xl ring-4 ring-gold-400 lg:scale-[1.06] lg:py-11 transition duration-300">
+        <span class="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-gold-400 px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-brand-950 shadow-lg whitespace-nowrap">
+          M&aacute;s solicitada
+        </span>
+
+        <!-- Contenedor 14 m2 -->
+        <svg viewBox="0 0 220 150" class="mx-auto w-full max-w-[210px] h-auto" role="img" aria-label="Contenedor de 14 metros cuadrados">
+          <ellipse cx="110" cy="132" rx="72" ry="9" fill="#000000" opacity=".18"/>
+          <path d="M128 82 44 40l48-24 84 42z" fill="#4BA3B6"/>
+          <path d="M128 122 44 80V40l84 42z" fill="#2F8598"/>
+          <path d="M128 122l48-24V58l-48 24z" fill="#1D5F6E"/>
+          <g stroke="#6FC0D1" stroke-width="1.6" opacity=".55">
+            <path d="M117.5 116.75v-40M107 111.5v-40M96.5 106.25v-40M86 101V61M75.5 95.75v-40M65 90.5v-40M54.5 85.25v-40"/>
+          </g>
+          <g stroke="#6FC0D1" stroke-width="1.6" opacity=".5">
+            <path d="M144 114V74M160 106V66"/>
+          </g>
+          <g stroke="#F5C518" stroke-width="2.2" stroke-linecap="round">
+            <path d="M150 99v-9M158 95v-9"/>
+          </g>
+          <g stroke="#8ED3E2" stroke-width="1.4" opacity=".45">
+            <path d="M144 74 60 32M160 66 76 24"/>
+          </g>
+          <path d="M128 82 44 40l48-24 84 42zM128 122 44 80V40M128 122l48-24V58M128 82v40" fill="none" stroke="#0B2E36" stroke-width="1.6" stroke-linejoin="round"/>
+          <!-- Persona de referencia junto a las puertas (aprox. 1,70 m) -->
+          <g>
+            <ellipse cx="190" cy="121" rx="7.5" ry="2.2" fill="#000000" opacity=".25"/>
+            <circle cx="190" cy="95.3" r="3.4" fill="#E8F4F7"/>
+            <rect x="185.4" y="100.4" width="9.2" height="9.8" rx="3.4" fill="#E8F4F7"/>
+            <rect x="185.8" y="110" width="3.4" height="10" rx="1.4" fill="#E8F4F7"/>
+            <rect x="190.8" y="110" width="3.4" height="10" rx="1.4" fill="#E8F4F7"/>
+          </g>
+        </svg>
+
+        <p class="mt-6 text-lg font-bold text-white">
+          14,0 m&sup2; <span class="mx-1 text-brand-300">/</span> 33,5 m&sup3;
+        </p>
+
+        <p class="mt-5 text-2xl font-extrabold tracking-tight text-gold-400">Consulta el valor</p>
+        <p class="mt-1 text-sm text-brand-100">Cotizaci&oacute;n sin costo ni compromiso</p>
+
+        <button type="button" data-open-modal data-tipo="Minibodega 14 m&sup2;"
+                class="mt-7 w-full rounded-full bg-gold-400 px-5 py-4 font-extrabold text-brand-950 shadow-lg shadow-black/25 hover:bg-gold-300 active:scale-[.98] transition">
+          Reservar 14 m&sup2;
+        </button>
+      </article>
+
+      <!-- ============ Plan 28 m2 ============ -->
+      <article class="reveal flex flex-col rounded-2xl bg-gray-50 p-8 text-center ring-1 ring-gray-200 hover:shadow-xl hover:ring-brand-200 transition duration-300">
+
+        <!-- Contenedor 28 m2 (largo) -->
+        <svg viewBox="0 0 220 150" class="mx-auto w-full max-w-[210px] h-auto" role="img" aria-label="Contenedor de 28 metros cuadrados">
+          <ellipse cx="106" cy="134" rx="82" ry="9" fill="#0f172a" opacity=".07"/>
+          <path d="M136 88 28 34l44-22 108 54z" fill="#2E7F91"/>
+          <path d="M136 126 28 72V34l108 54z" fill="#1C5B69"/>
+          <path d="M136 126l44-22V66l-44 22z" fill="#123E48"/>
+          <g stroke="#2E7F91" stroke-width="1.6" opacity=".55">
+            <path d="M124 120V82M112 114V76M100 108V70M88 102V64M76 96V58M64 90V52M52 84V46M40 78V40"/>
+          </g>
+          <g stroke="#2E7F91" stroke-width="1.6" opacity=".5">
+            <path d="M150.7 118.7v-38M165.3 111.3v-38"/>
+          </g>
+          <g stroke="#F5C518" stroke-width="2.2" stroke-linecap="round">
+            <path d="M156 103v-9M163 99.5v-9"/>
+          </g>
+          <g stroke="#4BA3B6" stroke-width="1.4" opacity=".45">
+            <path d="M150.7 80.7 42.7 26.7M165.3 73.3 57.3 19.3"/>
+          </g>
+          <path d="M136 88 28 34l44-22 108 54zM136 126 28 72V34M136 126l44-22V66M136 88v38" fill="none" stroke="#0B2E36" stroke-width="1.6" stroke-linejoin="round"/>
+          <!-- Persona de referencia junto a las puertas (aprox. 1,70 m) -->
+          <g>
+            <ellipse cx="194" cy="127" rx="7.3" ry="2.1" fill="#0f172a" opacity=".12"/>
+            <circle cx="194" cy="102.2" r="3.3" fill="#334155"/>
+            <rect x="189.5" y="107.2" width="9" height="9.4" rx="3.3" fill="#334155"/>
+            <rect x="189.9" y="116.6" width="3.3" height="9.4" rx="1.4" fill="#334155"/>
+            <rect x="194.7" y="116.6" width="3.3" height="9.4" rx="1.4" fill="#334155"/>
+          </g>
+        </svg>
+
+        <p class="mt-6 text-lg font-bold text-gray-800">
+          28,0 m&sup2; <span class="mx-1 text-gray-300">/</span> 66,9 m&sup3;
+        </p>
+
+        <p class="mt-5 text-2xl font-extrabold tracking-tight text-brand-700">Consulta el valor</p>
+        <p class="mt-1 text-sm text-gray-500">Cotizaci&oacute;n sin costo ni compromiso</p>
+
+        <button type="button" data-open-modal data-tipo="Minibodega 28 m&sup2;"
+                class="mt-7 w-full rounded-full bg-gold-400 px-5 py-3.5 font-extrabold text-brand-950 shadow-lg shadow-gold-400/25 hover:bg-gold-300 active:scale-[.98] transition">
+          Reservar 28 m&sup2;
+        </button>
+      </article>
+    </div>
+
+    <!-- Prestaciones comunes a los tres formatos. Antes se repetian dentro de
+         cada tarjeta; agrupadas aqui la comparacion queda mas limpia. -->
+    <div class="reveal mt-12 rounded-2xl bg-brand-50 ring-1 ring-brand-100 p-6 sm:p-8">
+      <p class="text-center text-sm font-bold uppercase tracking-[0.15em] text-brand-700">
+        Todas las minibodegas incluyen
+      </p>
+      <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-sm text-gray-700">
+        <li class="flex items-center justify-center gap-2.5 text-center">
+          <svg class="h-5 w-5 shrink-0 text-brand-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.79 6.8-6.79a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>
+          Acceso 24/7 al condominio
+        </li>
+        <li class="flex items-center justify-center gap-2.5 text-center">
+          <svg class="h-5 w-5 shrink-0 text-brand-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.79 6.8-6.79a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>
+          Guardia y c&aacute;maras
+        </li>
+        <li class="flex items-center justify-center gap-2.5 text-center">
+          <svg class="h-5 w-5 shrink-0 text-brand-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.79 6.8-6.79a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>
+          Cierre individual
+        </li>
+        <li class="flex items-center justify-center gap-2.5 text-center">
+          <svg class="h-5 w-5 shrink-0 text-brand-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.79 6.8-6.79a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>
+          Transpaletas en pr&eacute;stamo
+        </li>
+      </ul>
+    </div>
+
+    <p class="mt-10 text-center text-sm text-gray-500">
+      Escr&iacute;benos y te enviamos el valor vigente seg&uacute;n disponibilidad,
+      plazo de contrato y fecha de ingreso.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. SERVICIOS LOGISTICOS ADICIONALES
+     ============================================================ -->
+<section id="servicios" class="py-20 lg:py-28 bg-gray-50">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    <header class="max-w-3xl reveal">
+      <p class="text-sm font-bold uppercase tracking-[0.18em] text-brand-600">Servicios log&iacute;sticos</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
+        No s&oacute;lo te arrendamos el espacio: te ayudamos a moverlo
+      </h2>
+      <p class="mt-4 text-lg text-gray-600">
+        Equipamiento disponible dentro del recinto para que cargar y descargar no sea el problema.
+      </p>
+    </header>
+
+    <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+      <!-- Grua horquilla -->
+      <article class="reveal rounded-2xl bg-white p-8 ring-1 ring-gray-200 shadow-sm hover:shadow-xl transition duration-300">
+        <div class="flex items-start gap-5">
+          <span class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white" aria-hidden="true">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12H5a2 2 0 0 0-2 2v5"/><circle cx="6" cy="19" r="2"/><circle cx="13" cy="19" r="2"/><path d="M8 19h3M13 12V6a2 2 0 0 1 2-2h3"/><path d="M18 4v11h4"/></svg>
+          </span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900">Arriendo de gr&uacute;a horquilla</h3>
+            <p class="mt-2 text-gray-600 leading-relaxed">
+              Gr&uacute;a horquilla disponible dentro del condominio para movimientos de carga pesada
+              y paletizada. Se contrata por hora o jornada seg&uacute;n tu necesidad.
+            </p>
+            <span class="mt-4 inline-flex items-center rounded-full bg-gold-100 px-3 py-1 text-xs font-extrabold text-gold-800 ring-1 ring-gold-200">
+              Servicio con costo adicional
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Transpaletas -->
+      <article class="reveal rounded-2xl bg-white p-8 ring-1 ring-gray-200 shadow-sm hover:shadow-xl transition duration-300">
+        <div class="flex items-start gap-5">
+          <span class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white" aria-hidden="true">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="12" height="8" rx="1"/><path d="M3 16h14M5 12v6"/><circle cx="7" cy="20" r="1.6"/><circle cx="16" cy="20" r="1.6"/><path d="M19 4v12"/></svg>
+          </span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900">Transpaletas y yeguas de carga</h3>
+            <p class="mt-2 text-gray-600 leading-relaxed">
+              Pr&eacute;stamo <strong class="font-bold text-gray-900">sin costo</strong> de transpaletas y
+              yeguas de carga para nuestros clientes, para maniobrar f&aacute;cilmente dentro del recinto.
+            </p>
+            <span class="mt-4 inline-flex items-center rounded-full bg-brand-100 px-3 py-1 text-xs font-extrabold text-brand-800 ring-1 ring-brand-200">
+              Incluido sin costo
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arriendo de racks -->
+      <article class="reveal rounded-2xl bg-white p-8 ring-1 ring-gray-200 shadow-sm hover:shadow-xl transition duration-300">
+        <div class="flex items-start gap-5">
+          <span class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white" aria-hidden="true">
+            <!-- Estanteria / rack -->
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18M20 3v18"/><path d="M4 9h16M4 15h16M4 21h16M4 3h16"/><path d="M9 5.5h2M13 11.5h2M9 17.5h2"/></svg>
+          </span>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900">Arriendo de racks</h3>
+            <p class="mt-2 text-gray-600 leading-relaxed">
+              Sistemas de estanter&iacute;a en arriendo tanto para bodegas industriales como para
+              minibodegas. Aprovecha la altura de tu espacio y ordena tu inventario sin invertir
+              en estructura propia.
+            </p>
+            <span class="mt-4 inline-flex items-center rounded-full bg-gold-100 px-3 py-1 text-xs font-extrabold text-gold-800 ring-1 ring-gold-200">
+              Servicio con costo adicional
+            </span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Banda de beneficios operativos -->
+    <ul class="mt-6 grid gap-4 sm:grid-cols-3 reveal">
+      <li class="rounded-xl bg-white px-5 py-4 text-sm font-semibold text-gray-800 ring-1 ring-gray-200">Estacionamiento para carga y descarga</li>
+      <li class="rounded-xl bg-white px-5 py-4 text-sm font-semibold text-gray-800 ring-1 ring-gray-200">Calles interiores para tr&aacute;nsito pesado</li>
+      <li class="rounded-xl bg-white px-5 py-4 text-sm font-semibold text-gray-800 ring-1 ring-gray-200">Asesor&iacute;a para elegir tus m&sup2; exactos</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     8. UBICACION Y MAPA
+     ============================================================ -->
+<section id="ubicacion" class="py-20 lg:py-28 bg-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-5 gap-12 items-start">
+
+      <!-- Datos -->
+      <div class="lg:col-span-2 reveal">
+        <p class="text-sm font-bold uppercase tracking-[0.18em] text-brand-600">Ubicaci&oacute;n</p>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
+          Conectados con la entrada de Valdivia
+        </h2>
+        <p class="mt-4 text-lg text-gray-600">
+          Emplazados sobre Avenida Balmaceda, con acceso expedito desde la Ruta 5 y salida
+          r&aacute;pida hacia el centro de la ciudad y el sector industrial.
+        </p>
+
+        <address class="mt-8 space-y-5 not-italic">
+          <div class="flex gap-4">
+            <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white" aria-hidden="true">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <div>
+              <h3 class="font-bold text-gray-900">Direcci&oacute;n</h3>
+              <p class="mt-0.5 text-gray-600">Avenida Balmaceda 6555<br />Valdivia, Regi&oacute;n de Los R&iacute;os, Chile</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4">
+            <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white" aria-hidden="true">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+            </span>
+            <div>
+              <h3 class="font-bold text-gray-900">Horario de oficina</h3>
+              <p class="mt-0.5 text-gray-600">Lunes a viernes, 09:00 &ndash; 18:00 h<br /><span class="font-semibold text-brand-700">Acceso al recinto y guardia: 24/7</span></p>
+            </div>
+          </div>
+
+          <div class="flex gap-4">
+            <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-700 text-white" aria-hidden="true">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
+            </span>
+            <div>
+              <h3 class="font-bold text-gray-900">Contacto directo</h3>
+              <p class="mt-0.5 text-gray-600">
+                <a href="tel:+56000000000" class="js-tel font-semibold text-brand-700 hover:text-brand-500 transition"><span class="js-tel-label">+56 9 0000 0000</span></a><br />
+                <a href="mailto:contacto@chilespacios.cl" class="js-mail hover:text-brand-600 transition"><span class="js-mail-label">contacto@chilespacios.cl</span></a>
+              </p>
+            </div>
+          </div>
+        </address>
+
+        <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Avenida+Balmaceda+6555,+Valdivia,+Chile"
+           target="_blank" rel="noopener noreferrer"
+           class="mt-8 inline-flex items-center gap-2 rounded-xl bg-brand-700 px-6 py-3.5 font-bold text-white hover:bg-brand-800 active:scale-[.98] transition">
+          C&oacute;mo llegar
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
+      </div>
+
+      <!-- Mapa interactivo -->
+      <div class="lg:col-span-3 reveal">
+        <div class="overflow-hidden rounded-2xl ring-1 ring-gray-200 shadow-lg">
+          <!-- Google Maps embebido. Para usar el pin exacto de la empresa, reemplaza el src
+               por el que entrega Google Maps -> Compartir -> Insertar un mapa. -->
+          <iframe
+            title="Mapa de ubicacion de Chilespacios en Avenida Balmaceda 6555, Valdivia"
+            src="https://www.google.com/maps?q=Avenida%20Balmaceda%206555%2C%20Valdivia%2C%20Chile&amp;output=embed"
+            style="border:0" loading="lazy" allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            class="block w-full h-[380px] sm:h-[480px]"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     9. FORMULARIO DE CONTACTO / COTIZACION
+     ============================================================ -->
+<section id="contacto" class="py-20 lg:py-28 bg-brand-900 text-white relative overflow-hidden">
+  <div class="pointer-events-none absolute -top-40 right-0 h-96 w-96 rounded-full bg-gold-400/10 blur-3xl" aria-hidden="true"></div>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+    <div class="grid lg:grid-cols-2 gap-14">
+
+      <!-- Copy de apoyo -->
+      <div class="reveal">
+        <p class="text-sm font-bold uppercase tracking-[0.18em] text-gold-400">Contacto</p>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">
+          Cu&eacute;ntanos qu&eacute; necesitas guardar
+        </h2>
+        <p class="mt-4 text-lg text-brand-100">
+          Completa el formulario y te enviamos una cotizaci&oacute;n con disponibilidad real.
+          Si prefieres algo m&aacute;s r&aacute;pido, escr&iacute;benos por WhatsApp.
+        </p>
+
+        <!-- WhatsApp destacado -->
+        <a href="#" class="js-whatsapp mt-8 inline-flex items-center gap-3 rounded-xl bg-[#25D366] px-6 py-4 font-extrabold text-[#06331b] shadow-xl hover:brightness-105 active:scale-[.98] transition"
+           target="_blank" rel="noopener noreferrer">
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2m0 18.2c-1.6 0-3.2-.4-4.5-1.2l-.3-.2-3.1.8.8-3-.2-.3a8.2 8.2 0 1 1 7.3 3.9"/></svg>
+          Escribir por WhatsApp
+        </a>
+
+        <!-- Beneficios de contactar -->
+        <ul class="mt-10 space-y-3 text-brand-100">
+          <li class="flex items-center gap-3 text-sm"><svg class="h-5 w-5 shrink-0 text-gold-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.79 6.8-6.79a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>Respuesta el mismo d&iacute;a h&aacute;bil</li>
+          <li class="flex items-center gap-3 text-sm"><svg class="h-5 w-5 shrink-0 text-gold-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.79 6.8-6.79a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>Visita guiada al recinto sin costo</li>
+          <li class="flex items-center gap-3 text-sm"><svg class="h-5 w-5 shrink-0 text-gold-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.79 6.8-6.79a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>Sin costo de reserva</li>
+        </ul>
+      </div>
+
+      <!-- Formulario completo -->
+      <div class="reveal">
+        <form id="form-contacto" class="js-full-form rounded-2xl bg-white p-7 sm:p-9 shadow-2xl" novalidate>
+          <h3 class="text-xl font-extrabold text-gray-900">Solicitar cotizaci&oacute;n</h3>
+          <p class="mt-1.5 text-sm text-gray-500">Los campos marcados con <span class="text-brand-600">*</span> son obligatorios.</p>
+
+          <div class="mt-7 grid gap-5 sm:grid-cols-2">
+            <!-- Nombre -->
+            <div class="sm:col-span-2">
+              <label for="c-nombre" class="block text-sm font-semibold text-gray-800">Nombre completo <span class="text-brand-600">*</span></label>
+              <input id="c-nombre" name="nombre" type="text" required autocomplete="name" placeholder="Ej: Camila Soto"
+                     class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition" />
+              <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="c-email" class="block text-sm font-semibold text-gray-800">Email <span class="text-brand-600">*</span></label>
+              <input id="c-email" name="email" type="email" required autocomplete="email" placeholder="tucorreo@empresa.cl"
+                     class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition" />
+              <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+            </div>
+
+            <!-- Telefono -->
+            <div>
+              <label for="c-telefono" class="block text-sm font-semibold text-gray-800">Tel&eacute;fono <span class="text-brand-600">*</span></label>
+              <input id="c-telefono" name="telefono" type="tel" required autocomplete="tel" placeholder="+56 9 1234 5678"
+                     class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition" />
+              <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+            </div>
+
+            <!-- Tipo de espacio -->
+            <div class="sm:col-span-2">
+              <label for="c-tipo" class="block text-sm font-semibold text-gray-800">Tipo de espacio de inter&eacute;s <span class="text-brand-600">*</span></label>
+              <select id="c-tipo" name="tipo" required
+                      class="mt-1.5 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition">
+                <option value="" disabled selected>Selecciona una opci&oacute;n&hellip;</option>
+                <option value="Minibodega 7 m&sup2;">Minibodega 7 m&sup2;</option>
+                <option value="Minibodega 14 m&sup2;">Minibodega 14 m&sup2;</option>
+                <option value="Minibodega 28 m&sup2;">Minibodega 28 m&sup2;</option>
+                <option value="Bodega Industrial pr&oacute;x. etapa (desde 132 m&sup2;)">Bodega Industrial pr&oacute;x. etapa (desde 132 m&sup2;)</option>
+            <option value="Bodega Industrial">Bodega Industrial &mdash; desde 240 m&sup2;</option>
+              </select>
+              <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+            </div>
+
+            <!-- Mensaje -->
+            <div class="sm:col-span-2">
+              <label for="c-mensaje" class="block text-sm font-semibold text-gray-800">Mensaje</label>
+              <textarea id="c-mensaje" name="mensaje" rows="4" placeholder="Cu&eacute;ntanos qu&eacute; vas a almacenar, por cu&aacute;nto tiempo y desde cu&aacute;ndo lo necesitas."
+                        class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition resize-y"></textarea>
+            </div>
+          </div>
+
+          <button type="submit"
+                  class="mt-7 w-full rounded-xl bg-gold-400 px-6 py-4 text-base font-extrabold text-brand-950 shadow-lg shadow-gold-400/30 hover:bg-gold-300 active:scale-[.98] transition">
+            Enviar solicitud
+          </button>
+
+          <p class="mt-4 text-center text-xs text-gray-400">
+            Al enviar aceptas ser contactado por Chilespacios respecto de tu consulta.
+          </p>
+
+          <!-- Mensaje de exito -->
+          <div class="js-success mt-5 hidden rounded-xl bg-brand-50 p-4 text-sm font-semibold text-brand-800 ring-1 ring-brand-200" role="status">
+            &iexcl;Gracias! Recibimos tu solicitud. Te contactaremos a la brevedad.
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     10. FOOTER
+     ============================================================ -->
+<footer class="bg-brand-950 text-brand-200">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+
+      <!-- Marca -->
+      <div class="lg:col-span-2 max-w-sm">
+        <!-- ===== LOGO (FOOTER) - version invertida ===============
+             Sobre fondo verde oscuro el logo original (texto negro)
+             no tiene contraste, asi que aqui va la version reversa:
+             bodega en verde claro, wordmark en blanco y el hueco del
+             porton en el color del fondo. Si te entregan un archivo
+             oficial en blanco, montalo con el <img> comentado.
+             ======================================================= -->
+        <!-- Mismo marco que en el header, aclarado para el fondo verde oscuro -->
+        <a href="#inicio" class="inline-flex items-center gap-3 border-2 border-white/30 px-4 py-3" aria-label="Chilespacios - Bodegas y Logistica">
+          <!-- <img src="img/logo-chilespacios-blanco.png" alt="Chilespacios - Bodegas y Logistica" class="h-12 w-auto" /> -->
+
+          <svg class="h-11 w-auto shrink-0" viewBox="0 0 58 40" fill="none" aria-hidden="true">
+            <path d="M0 40V10L29 0v40z" fill="#29C766"/>
+            <path d="M29 0l29 10v30H29z" fill="#1FA855"/>
+            <rect x="13.2" y="16.2" width="31.6" height="23.8" fill="#052e16"/>
+            <rect x="15" y="18" width="28" height="22" fill="#F5C518"/>
+          </svg>
+
+          <span class="block">
+            <span class="logo-word block text-2xl text-white">CHILESPACIOS</span>
+            <span class="logo-tag block mt-1 text-[0.64rem] tracking-[0.185em] text-brand-200">BODEGAS Y LOG&Iacute;STICA</span>
+          </span>
+        </a>
+
+        <p class="mt-6 text-sm leading-relaxed">
+          Condominio de bodegas y minibodegas en Valdivia. M&aacute;s de 10 a&ntilde;os entregando
+          soluciones de almacenamiento seguro para empresas y particulares.
+        </p>
+
+        <!-- Redes sociales -->
+        <ul class="mt-6 flex gap-3">
+          <li>
+            <a href="#" aria-label="Chilespacios en Instagram" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-gold-400 hover:text-brand-950 transition">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="#" aria-label="Chilespacios en Facebook" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-gold-400 hover:text-brand-950 transition">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h2.5l.5-3H13v-2c0-.6.4-1 1-1Z"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="#" aria-label="Chilespacios en LinkedIn" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-gold-400 hover:text-brand-950 transition">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.9 8.5H4V20h2.9V8.5ZM5.4 4a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4ZM20 13.6c0-3-1.6-4.4-3.8-4.4-1.7 0-2.5.9-2.9 1.6V8.5H10.4V20h2.9v-6.3c0-1.3.6-2.1 1.8-2.1 1.1 0 1.6.8 1.6 2.1V20H20v-6.4Z"/></svg>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="js-whatsapp inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 ring-1 ring-white/10 hover:bg-[#25D366] hover:text-[#06331b] transition" aria-label="Chilespacios en WhatsApp" target="_blank" rel="noopener noreferrer">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2m0 18.2c-1.6 0-3.2-.4-4.5-1.2l-.3-.2-3.1.8.8-3-.2-.3a8.2 8.2 0 1 1 7.3 3.9"/></svg>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Mapa del sitio -->
+      <nav aria-labelledby="footer-nav">
+        <h2 id="footer-nav" class="text-sm font-bold uppercase tracking-[0.15em] text-white">Mapa del sitio</h2>
+        <ul class="mt-5 space-y-3 text-sm">
+          <li><a href="#inicio"       class="hover:text-gold-400 transition">Inicio</a></li>
+          <li><a href="#condominio"   class="hover:text-gold-400 transition">Nuestro Condominio</a></li>
+          <li><a href="#industriales" class="hover:text-gold-400 transition">Bodegas Industriales</a></li>
+          <li><a href="#minibodegas"  class="hover:text-gold-400 transition">Minibodegas</a></li>
+          <li><a href="#servicios"    class="hover:text-gold-400 transition">Servicios</a></li>
+          <li><a href="#ubicacion"    class="hover:text-gold-400 transition">Ubicaci&oacute;n</a></li>
+          <li><a href="#contacto"     class="hover:text-gold-400 transition">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <!-- Contacto -->
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-[0.15em] text-white">Contacto</h2>
+        <address class="mt-5 space-y-3 text-sm not-italic">
+          <p>Avenida Balmaceda 6555<br />Valdivia, Regi&oacute;n de Los R&iacute;os<br />Chile</p>
+          <p><a href="tel:+56000000000" class="js-tel font-semibold hover:text-gold-400 transition"><span class="js-tel-label">+56 9 0000 0000</span></a></p>
+          <p><a href="mailto:contacto@chilespacios.cl" class="js-mail hover:text-gold-400 transition"><span class="js-mail-label">contacto@chilespacios.cl</span></a></p>
+          <p class="pt-2 text-brand-300">Oficina: Lun a Vie, 09:00&ndash;18:00<br />Guardia en terreno: 24/7</p>
+        </address>
+      </div>
+    </div>
+
+    <!-- Legal -->
+    <div class="mt-14 border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-300">
+      <p>&copy; <span id="year">2026</span> Chilespacios. Todos los derechos reservados.</p>
+      <ul class="flex gap-6">
+        <li><a href="#" class="hover:text-gold-400 transition">T&eacute;rminos y condiciones</a></li>
+        <li><a href="#" class="hover:text-gold-400 transition">Pol&iacute;tica de privacidad</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     MODAL DE COTIZACION
+     ============================================================ -->
+<div id="modal-cotizar" class="fixed inset-0 z-[60] hidden overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div class="absolute inset-0 bg-brand-950/70 backdrop-blur-sm" data-close-modal></div>
+
+  <div class="relative flex min-h-full items-end sm:items-center justify-center p-0 sm:p-6">
+    <div class="w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl bg-white shadow-2xl">
+
+      <header class="sticky top-0 flex items-start justify-between gap-4 rounded-t-2xl bg-brand-800 px-6 py-5 text-white">
+        <div>
+          <h2 id="modal-titulo" class="text-lg font-extrabold">Solicita tu cotizaci&oacute;n</h2>
+          <p class="mt-0.5 text-sm text-brand-100">Te respondemos el mismo d&iacute;a h&aacute;bil.</p>
+        </div>
+        <button type="button" data-close-modal class="rounded-lg p-1.5 text-brand-100 hover:bg-white/10 hover:text-white transition">
+          <span class="sr-only">Cerrar</span>
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+
+      <form class="js-full-form px-6 py-6 space-y-5" novalidate>
+        <div>
+          <label for="m-nombre" class="block text-sm font-semibold text-gray-800">Nombre completo <span class="text-brand-600">*</span></label>
+          <input id="m-nombre" name="nombre" type="text" required autocomplete="name" placeholder="Ej: Camila Soto"
+                 class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition" />
+          <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label for="m-email" class="block text-sm font-semibold text-gray-800">Email <span class="text-brand-600">*</span></label>
+            <input id="m-email" name="email" type="email" required autocomplete="email" placeholder="tucorreo@empresa.cl"
+                   class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition" />
+            <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+          </div>
+          <div>
+            <label for="m-telefono" class="block text-sm font-semibold text-gray-800">Tel&eacute;fono <span class="text-brand-600">*</span></label>
+            <input id="m-telefono" name="telefono" type="tel" required autocomplete="tel" placeholder="+56 9 1234 5678"
+                   class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition" />
+            <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+          </div>
+        </div>
+        <div>
+          <label for="m-tipo" class="block text-sm font-semibold text-gray-800">Tipo de espacio de inter&eacute;s <span class="text-brand-600">*</span></label>
+          <select id="m-tipo" name="tipo" required
+                  class="mt-1.5 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition">
+            <option value="" disabled selected>Selecciona una opci&oacute;n&hellip;</option>
+            <option value="Minibodega 7 m&sup2;">Minibodega 7 m&sup2;</option>
+            <option value="Minibodega 14 m&sup2;">Minibodega 14 m&sup2;</option>
+            <option value="Minibodega 28 m&sup2;">Minibodega 28 m&sup2;</option>
+            <option value="Bodega Industrial pr&oacute;x. etapa (desde 132 m&sup2;)">Bodega Industrial pr&oacute;x. etapa (desde 132 m&sup2;)</option>
+            <option value="Bodega Industrial">Bodega Industrial &mdash; desde 240 m&sup2;</option>
+          </select>
+          <p class="js-error mt-1.5 hidden text-xs font-medium text-red-600"></p>
+        </div>
+        <div>
+          <label for="m-mensaje" class="block text-sm font-semibold text-gray-800">Mensaje</label>
+          <textarea id="m-mensaje" name="mensaje" rows="3" placeholder="&iquest;Qu&eacute; necesitas almacenar y desde cu&aacute;ndo?"
+                    class="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none transition resize-y"></textarea>
+        </div>
+
+        <button type="submit" class="w-full rounded-xl bg-gold-400 px-6 py-4 font-extrabold text-brand-950 shadow-lg shadow-gold-400/30 hover:bg-gold-300 active:scale-[.98] transition">
+          Enviar solicitud
+        </button>
+
+        <a href="#" class="js-whatsapp flex items-center justify-center gap-2 text-sm font-bold text-brand-700 hover:underline" target="_blank" rel="noopener noreferrer">
+          O escr&iacute;benos directo por WhatsApp
+        </a>
+
+        <div class="js-success hidden rounded-xl bg-brand-50 p-4 text-sm font-semibold text-brand-800 ring-1 ring-brand-200" role="status">
+          &iexcl;Gracias! Recibimos tu solicitud. Te contactaremos a la brevedad.
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     VISOR DE FOTOS AMPLIADAS (galeria "Nuestro condominio")
+     ============================================================ -->
+<div id="lightbox" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/90 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Foto ampliada del condominio">
+
+  <button type="button" data-lb-close
+          class="absolute top-4 right-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/25 hover:bg-white/20 transition">
+    <span class="sr-only">Cerrar</span>
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+
+  <button type="button" data-lb-prev
+          class="absolute left-2 sm:left-5 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/25 hover:bg-white/20 transition">
+    <span class="sr-only">Foto anterior</span>
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+
+  <button type="button" data-lb-next
+          class="absolute right-2 sm:right-5 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/25 hover:bg-white/20 transition">
+    <span class="sr-only">Foto siguiente</span>
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+
+  <figure class="w-full max-w-5xl">
+    <img id="lb-img" src="" alt="" class="mx-auto max-h-[78vh] w-auto max-w-full rounded-xl object-contain shadow-2xl" />
+    <figcaption id="lb-cap" class="mt-5 text-center text-sm font-medium text-white/85"></figcaption>
+  </figure>
+</div>
+
+<!-- Boton flotante de WhatsApp -->
+<a href="#" class="js-whatsapp fixed bottom-5 right-5 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-[#06331b] shadow-2xl hover:scale-105 active:scale-95 transition"
+   target="_blank" rel="noopener noreferrer" aria-label="Escribir a Chilespacios por WhatsApp">
+  <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2m0 18.2c-1.6 0-3.2-.4-4.5-1.2l-.3-.2-3.1.8.8-3-.2-.3a8.2 8.2 0 1 1 7.3 3.9"/></svg>
+</a>
+
+<!-- ============================================================
+     DATOS ESTRUCTURADOS (SEO local)
+     ============================================================ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SelfStorage",
+  "name": "Chilespacios",
+  "description": "Condominio de bodegas industriales y minibodegas en arriendo en Valdivia, con guardia 24/7, camaras perimetrales y mas de 10 anos de experiencia.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Avenida Balmaceda 6555",
+    "addressLocality": "Valdivia",
+    "addressRegion": "Los Rios",
+    "addressCountry": "CL"
+  },
+  "areaServed": "Valdivia, Chile",
+  "openingHours": "Mo-Fr 09:00-18:00"
+}
+</script>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------
+     CONFIGURACION - edita SOLO este bloque con los datos reales.
+     Los valores se inyectan automaticamente en toda la pagina.
+     ------------------------------------------------------------ */
+  var CONFIG = {
+    whatsapp: '56900000000',        // Formato internacional, sin + ni espacios
+    telefono: '+56 9 0000 0000',    // Como se muestra en pantalla
+    telefonoLink: '+56900000000',   // Para el enlace tel:
+    email: 'contacto@chilespacios.cl',
+    // Modo de envio del formulario:
+    //   'whatsapp' -> abre WhatsApp con el mensaje prellenado (no requiere servidor)
+    //   'endpoint' -> hace POST al endpoint indicado (Formspree, tu API, etc.)
+    modoEnvio: 'whatsapp',
+    endpoint: ''                    // Ej: 'https://formspree.io/f/xxxxxxx'
+  };
+
+  var $  = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* ---------- Inyeccion de datos de contacto ---------- */
+  $$('.js-tel').forEach(function (a) { a.href = 'tel:' + CONFIG.telefonoLink; });
+  $$('.js-tel-label').forEach(function (el) { el.textContent = CONFIG.telefono; });
+  $$('.js-mail').forEach(function (a) { a.href = 'mailto:' + CONFIG.email; });
+  $$('.js-mail-label').forEach(function (el) { el.textContent = CONFIG.email; });
+  $$('.js-whatsapp').forEach(function (a) {
+    a.href = 'https://wa.me/' + CONFIG.whatsapp +
+      '?text=' + encodeURIComponent('Hola Chilespacios, quiero informacion sobre el arriendo de bodegas.');
+  });
+  $('#year').textContent = new Date().getFullYear();
+
+  /* ---------- Navbar: sombra al hacer scroll ---------- */
+  var navbar = $('#navbar');
+  var onScroll = function () { navbar.classList.toggle('shadow-lg', window.scrollY > 12); };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---------- Menu movil ---------- */
+  var toggle = $('#menu-toggle');
+  var menu   = $('#mobile-menu');
+  function setMenu(open) {
+    menu.classList.toggle('hidden', !open);
+    toggle.setAttribute('aria-expanded', String(open));
+    $('#icon-open').classList.toggle('hidden', open);
+    $('#icon-close').classList.toggle('hidden', !open);
+  }
+  toggle.addEventListener('click', function () { setMenu(menu.classList.contains('hidden')); });
+  $$('.mobile-link').forEach(function (link) { link.addEventListener('click', function () { setMenu(false); }); });
+
+  /* ---------- Modal de cotizacion ---------- */
+  var modal = $('#modal-cotizar');
+  var lastFocused = null;
+
+  function openModal(tipo) {
+    lastFocused = document.activeElement;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    setMenu(false);
+    // Preselecciona el tipo de espacio segun el boton que abrio el modal
+    if (tipo) {
+      var select = $('#m-tipo');
+      var match = Array.prototype.slice.call(select.options).filter(function (o) { return o.value === tipo; })[0];
+      if (match) select.value = tipo;
+    }
+    $('#m-nombre').focus();
+  }
+  function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (lastFocused) lastFocused.focus();
+  }
+
+  $$('[data-open-modal]').forEach(function (btn) {
+    btn.addEventListener('click', function () { openModal(btn.getAttribute('data-tipo')); });
+  });
+  $$('[data-close-modal]').forEach(function (el) { el.addEventListener('click', closeModal); });
+
+  document.addEventListener('keydown', function (e) {
+    if (modal.classList.contains('hidden')) return;
+    if (e.key === 'Escape') { closeModal(); return; }
+    // Foco atrapado dentro del modal
+    if (e.key === 'Tab') {
+      var focusables = $$('a[href], button, input, select, textarea', modal).filter(function (el) {
+        return !el.disabled && el.offsetParent !== null;
+      });
+      if (!focusables.length) return;
+      var first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  /* ---------- Validacion y envio de formularios ---------- */
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var TEL_RE   = /^[+()\d\s-]{8,}$/;
+
+  function errorNode(field) {
+    var holder = field.parentElement;
+    return holder ? holder.querySelector('.js-error') : null;
+  }
+  function showError(field, msg) {
+    var p = errorNode(field);
+    field.classList.add('border-red-400', 'ring-2', 'ring-red-100');
+    field.setAttribute('aria-invalid', 'true');
+    if (p) { p.textContent = msg; p.classList.remove('hidden'); }
+  }
+  function clearError(field) {
+    var p = errorNode(field);
+    field.classList.remove('border-red-400', 'ring-2', 'ring-red-100');
+    field.removeAttribute('aria-invalid');
+    if (p) p.classList.add('hidden');
+  }
+
+  function validate(form) {
+    var ok = true, firstBad = null;
+    $$('[required]', form).forEach(function (field) {
+      clearError(field);
+      var v = field.value.trim();
+      var msg = '';
+      if (!v) msg = 'Este campo es obligatorio.';
+      else if (field.type === 'email' && !EMAIL_RE.test(v)) msg = 'Ingresa un email valido.';
+      else if (field.type === 'tel'   && !TEL_RE.test(v))   msg = 'Ingresa un telefono valido.';
+      if (msg) { showError(field, msg); ok = false; if (!firstBad) firstBad = field; }
+    });
+    if (firstBad) firstBad.focus();
+    return ok;
+  }
+
+  function buildMessage(data) {
+    return [
+      'Hola Chilespacios, quiero cotizar un espacio.',
+      '',
+      'Nombre: ' + (data.nombre || '-'),
+      'Email: ' + (data.email || '-'),
+      'Telefono: ' + (data.telefono || '-'),
+      'Interes: ' + (data.tipo || '-'),
+      data.mensaje ? ('Mensaje: ' + data.mensaje) : ''
+    ].filter(Boolean).join('\n');
+  }
+
+  function formData(form) {
+    var out = {};
+    new FormData(form).forEach(function (value, key) { out[key] = value; });
+    return out;
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    var form = e.currentTarget;
+    if (!validate(form)) return;
+
+    var data = formData(form);
+    var btn = form.querySelector('button[type="submit"]');
+    var original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    var done = function () {
+      var success = form.querySelector('.js-success');
+      if (success) success.classList.remove('hidden');
+      form.reset();
+      btn.disabled = false;
+      btn.textContent = original;
+    };
+    var fail = function () {
+      alert('No pudimos enviar tu solicitud. Escribenos por WhatsApp o al ' + CONFIG.telefono + '.');
+      btn.disabled = false;
+      btn.textContent = original;
+    };
+
+    if (CONFIG.modoEnvio === 'endpoint' && CONFIG.endpoint) {
+      fetch(CONFIG.endpoint, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(function (res) { if (!res.ok) throw new Error('Error de envio'); done(); }).catch(fail);
+    } else {
+      // Sin backend: derivamos la solicitud a WhatsApp con el mensaje prellenado
+      window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(buildMessage(data)), '_blank', 'noopener');
+      done();
+    }
+  }
+
+  $$('.js-full-form').forEach(function (f) { f.addEventListener('submit', handleSubmit); });
+
+  // Formulario rapido: valida y abre el modal ya prellenado.
+  // Hoy el hero muestra la vista satelital en vez del formulario, asi que este
+  // bloque no encuentra ninguno; queda listo por si se vuelve a incorporar
+  // un formulario con la clase .js-quick-form en cualquier seccion.
+  $$('.js-quick-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!validate(form)) return;
+      var data = formData(form);
+      openModal(data.tipo);
+      $('#m-nombre').value   = data.nombre   || '';
+      $('#m-telefono').value = data.telefono || '';
+      $('#m-email').focus();
+    });
+  });
+
+  // Limpia el error de un campo apenas el usuario lo corrige
+  $$('input, select, textarea').forEach(function (f) {
+    f.addEventListener('input', function () { clearError(f); });
+  });
+
+  /* ---------- Galeria: visor de fotos ampliadas ---------- */
+  var lightbox = $('#lightbox');
+  var lbImg    = $('#lb-img');
+  var lbCap    = $('#lb-cap');
+  // Solo entran al visor las fotos que cargaron correctamente
+  var gallery  = $$('.gallery-item');
+  var lbIndex  = 0;
+  var lbLastFocused = null;
+
+  function lbShow(i) {
+    var items = gallery.filter(function (f) { return !f.classList.contains('img-missing'); });
+    if (!items.length) return;
+    lbIndex = (i + items.length) % items.length;
+    var fig = items[lbIndex];
+    var img = fig.querySelector('img');
+    lbImg.src = img.getAttribute('src');
+    lbImg.alt = img.getAttribute('alt') || '';
+    lbCap.textContent = fig.getAttribute('data-caption') || '';
+  }
+  function lbOpen(fig) {
+    var items = gallery.filter(function (f) { return !f.classList.contains('img-missing'); });
+    var start = items.indexOf(fig);
+    if (start < 0) return;
+    lbLastFocused = document.activeElement;
+    lbShow(start);
+    lightbox.classList.remove('hidden');
+    lightbox.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    $('[data-lb-close]', lightbox).focus();
+  }
+  function lbClose() {
+    lightbox.classList.add('hidden');
+    lightbox.classList.remove('flex');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+    if (lbLastFocused) lbLastFocused.focus();
+  }
+
+  gallery.forEach(function (fig) {
+    fig.addEventListener('click', function () { lbOpen(fig); });
+    // Accesible por teclado: la figura se comporta como boton
+    fig.setAttribute('tabindex', '0');
+    fig.setAttribute('role', 'button');
+    fig.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lbOpen(fig); }
+    });
+  });
+
+  $$('[data-lb-close]').forEach(function (b) { b.addEventListener('click', lbClose); });
+  $$('[data-lb-prev]').forEach(function (b) { b.addEventListener('click', function () { lbShow(lbIndex - 1); }); });
+  $$('[data-lb-next]').forEach(function (b) { b.addEventListener('click', function () { lbShow(lbIndex + 1); }); });
+  // Clic en el fondo (fuera de la imagen y de los botones) tambien cierra
+  lightbox.addEventListener('click', function (e) { if (e.target === lightbox) lbClose(); });
+
+  document.addEventListener('keydown', function (e) {
+    if (lightbox.classList.contains('hidden')) return;
+    if (e.key === 'Escape')     { lbClose(); }
+    if (e.key === 'ArrowLeft')  { lbShow(lbIndex - 1); }
+    if (e.key === 'ArrowRight') { lbShow(lbIndex + 1); }
+  });
+
+  /* ---------- Revelado progresivo al hacer scroll ---------- */
+  var reveals = $$('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+
+  /* ---------- Resalte del enlace activo en el navbar ---------- */
+  var sections = $$('main section[id]');
+  if ('IntersectionObserver' in window && sections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        $$('.nav-link').forEach(function (link) {
+          var active = link.getAttribute('href') === '#' + entry.target.id;
+          link.classList.toggle('bg-brand-50', active);
+          link.classList.toggle('text-brand-700', active);
+        });
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
