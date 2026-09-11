@@ -55,7 +55,7 @@ var CONFIG = {
   whatsapp: '56900000000',        // Nº real, formato internacional, sin + ni espacios
   telefono: '+56 9 0000 0000',    // Cómo se muestra en pantalla
   telefonoLink: '+56900000000',   // Para el enlace tel:
-  email: 'contacto@chilespacios.cl',
+  email: 'contactochilespacios@gmail.com',
 
   mostrarTelefono: false,         // ← ponlo en true cuando tengas el número
   mostrarWhatsapp: false,         // ← ponlo en true cuando tengas el número
