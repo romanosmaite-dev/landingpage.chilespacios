@@ -1,0 +1,68 @@
+FOTOS DE LA SECCION "NUESTRO CONDOMINIO"
+========================================
+
+ESTADO: las 4 fotos ya estan cargadas y funcionando.
+
+  condominio-1.jpg  -> Fachada con los portones verdes de acceso vehicular
+  condominio-2.jpg  -> Vista aerea del condominio y el patio de maniobras
+  condominio-3.jpg  -> Calle interior con los camiones y los cerros al fondo
+  condominio-4.jpg  -> Fila de bodegas con las cortinas de acero automaticas
+
+
+IMPORTANTE SI CAMBIAS O AGREGAS FOTOS
+-------------------------------------
+Los nombres deben ser EXACTAMENTE esos: en minusculas, sin espacios,
+sin tildes y con una sola extension (.jpg, no .jpg.jpeg).
+
+Esa es la razon por la que las fotos no se veian la primera vez: venian
+como "Chile espacios-9.jpg.jpeg". Los espacios y la doble extension
+rompen la ruta, y en un servidor de internet (que a diferencia de Windows
+si distingue mayusculas de minusculas) fallan todavia mas seguido.
+
+Si una foto falta o esta mal nombrada, la tarjeta muestra una placa verde
+que dice "Falta img/condominio-N.jpg" en vez de un icono roto. Esa placa
+es la senal de que el nombre no coincide.
+
+Para cambiar una foto: reemplaza el archivo manteniendo el mismo nombre.
+No hay que tocar el codigo.
+
+
+RECOMENDACIONES
+---------------
+- Las tarjetas recortan a proporcion 4:3, asi que lo importante de la
+  foto conviene que este al centro.
+- Las 4 actuales pesan entre 300 y 450 KB (1,6 MB en total). Funciona,
+  pero si quieres que la pagina vuele en celular, pasalas por
+  https://squoosh.app y dejalas bajo 200 KB cada una.
+- Si exportas en formato .webp pesan casi la mitad. En ese caso hay que
+  cambiar la extension tambien en index.html (busca "condominio-1.jpg").
+
+
+FOTO DEL HERO: vista-satelital.jpg
+----------------------------------
+El Hero (la primera pantalla) muestra esta foto, al costado del titulo.
+Ya esta cargada y funcionando: 819x1024 px, 170 KB.
+
+El marco es VERTICAL, proporcion 4:5 (por ejemplo 800x1000 o 1200x1500).
+La imagen actual calza exacto, asi que no se recorta nada. Si la cambias
+por una apaisada, se recortaran los costados.
+
+OJO CON EL NOMBRE: debe ser todo en minusculas.
+El archivo llego como "Vista-satelital.jpg", con V mayuscula. En Windows
+da igual, pero los servidores de internet distinguen mayusculas y la
+imagen no habria cargado en el sitio publicado.
+
+NOTA: el nombre dice "satelital" por la primera version que se uso, pero
+hoy contiene una foto aerea de las bodegas. El nombre del archivo no se
+ve en la pagina, asi que no molesta; solo no te confundas al cambiarla.
+
+Para reemplazarla, sobrescribe el archivo con el mismo nombre. No hay que
+tocar el codigo.
+
+
+OTRAS IMAGENES OPCIONALES EN ESTA CARPETA
+-----------------------------------------
+  hero-bodegas.jpg             -> Foto de fondo del Hero (README, punto 4)
+  logo-chilespacios.png        -> Logo oficial, si prefieres montarlo como
+                                  imagen en vez del SVG (README, punto 1)
+  logo-chilespacios-blanco.png -> Version del logo en blanco, para el footer

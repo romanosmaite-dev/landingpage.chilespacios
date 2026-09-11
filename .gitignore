@@ -1,0 +1,22 @@
+# Archivos que genera el sistema operativo
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+
+# Configuracion de editores
+.vscode/
+.idea/
+
+# Respaldos y temporales
+*.bak
+*.tmp
+~$*
+
+# Vercel (se crea si alguna vez se usa la CLI de Vercel)
+.vercel/
+
+# Dependencias y variables de entorno (por si el proyecto crece)
+node_modules/
+.env
+.env.*
