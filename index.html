@@ -1408,6 +1408,11 @@
     //   'endpoint'   -> hace POST al endpoint indicado (Formspree, tu API, etc.)
     // Si eliges 'whatsapp' con mostrarWhatsapp en false, cae solo a 'email'.
     modoEnvio: 'formsubmit-clasico',
+
+    // Casilla "No soy un robot" de FormSubmit (modo clasico).
+    // false = el cliente vuelve directo al "Gracias", sin pantalla intermedia.
+    // Si empiezan a llegar cotizaciones de spam, cambialo a true.
+    captchaFormSubmit: false,
     endpoint: ''                    // Ej: 'https://formspree.io/f/xxxxxxx'
   };
 
@@ -1601,6 +1606,7 @@
       form.method = 'POST';
       setHidden(form, '_subject', 'Cotizacion ' + (data.tipo || 'espacio') + ' - ' + (data.nombre || ''));
       setHidden(form, '_template', 'table');
+      setHidden(form, '_captcha', CONFIG.captchaFormSubmit ? 'true' : 'false');
       if (/^https?:$/.test(location.protocol)) {
         setHidden(form, '_next', location.origin + location.pathname + '?enviado=1#contacto');
       }

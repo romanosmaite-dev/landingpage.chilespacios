@@ -61,6 +61,7 @@ var CONFIG = {
   mostrarWhatsapp: false,         // ← ponlo en true cuando tengas el número
 
   modoEnvio: 'formsubmit-clasico', // 'formsubmit-clasico' | 'formsubmit' | 'whatsapp' | 'email' | 'endpoint'
+  captchaFormSubmit: false,       // casilla "No soy un robot"; ponlo en true si llega spam
   endpoint: ''                    // URL del backend si usas 'endpoint'
 };
 ```
@@ -100,9 +101,13 @@ inline y foco automático en el primer campo con problemas.
 
 **Modo `formsubmit-clasico` (el activo hoy):** el método oficial de FormSubmit.
 Los formularios tienen `action="https://formsubmit.co/<email>"` y `method="POST"`,
-así que funcionan incluso sin JavaScript. Al enviar, el visitante pasa por la página
-de FormSubmit (un captcha anti-spam y, solo la primera vez, el aviso de activación)
-y vuelve a la landing, donde ve el "¡Gracias!". Si cambias el `email` en `CONFIG`,
+así que funcionan incluso sin JavaScript. Al enviar, el visitante pasa por FormSubmit
+en una fracción de segundo y vuelve a la landing, donde ve el "¡Gracias!".
+
+La casilla anti-spam "No soy un robot" de FormSubmit está **desactivada**
+(`captchaFormSubmit: false`) para no agregar un paso al cliente. La protección
+contra robots queda a cargo del campo trampa `_honey`. Si empiezan a llegar
+cotizaciones de spam, cambia `captchaFormSubmit` a `true` y la casilla vuelve. Si cambias el `email` en `CONFIG`,
 el JavaScript actualiza el destino solo; el `action` escrito en el HTML es el respaldo
 para navegadores sin JavaScript, así que conviene cambiarlo también.
 
