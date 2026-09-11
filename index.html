@@ -1059,7 +1059,8 @@
 
       <!-- Formulario completo -->
       <div class="reveal">
-        <form id="form-contacto" class="js-full-form rounded-2xl bg-white p-7 sm:p-9 shadow-2xl" novalidate>
+        <form id="form-contacto" class="js-full-form rounded-2xl bg-white p-7 sm:p-9 shadow-2xl"
+              action="https://formsubmit.co/contactochilespacios@gmail.com" method="POST" novalidate>
           <!-- Campo trampa anti-spam: invisible para personas, los robots lo llenan -->
           <input type="text" name="_honey" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <h3 class="text-xl font-extrabold text-gray-900">Solicitar cotizaci&oacute;n</h3>
@@ -1255,7 +1256,8 @@
         </button>
       </header>
 
-      <form class="js-full-form px-6 py-6 space-y-5" novalidate>
+      <form class="js-full-form px-6 py-6 space-y-5"
+            action="https://formsubmit.co/contactochilespacios@gmail.com" method="POST" novalidate>
         <!-- Campo trampa anti-spam: invisible para personas, los robots lo llenan -->
         <input type="text" name="_honey" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div>
@@ -1393,16 +1395,19 @@
     mostrarWhatsapp: false,
 
     // Modo de envio del formulario:
-    //   'formsubmit' -> envia la solicitud por formsubmit.co directo a `email`.
-    //                   No depende del computador del visitante. La PRIMERA
-    //                   vez llega a `email` un correo "Activate Form" que hay
-    //                   que abrir y aceptar; desde ahi llegan todas.
+    //   'formsubmit-clasico' -> metodo oficial de FormSubmit: el navegador envia
+    //                   el formulario a formsubmit.co/<email>, FormSubmit muestra
+    //                   su pagina (captcha y, la primera vez, el aviso de
+    //                   activacion) y luego vuelve a esta pagina con "Gracias".
+    //   'formsubmit' -> igual, pero por detras (AJAX), sin salir de la pagina.
+    //                   En ambos, la PRIMERA vez llega a `email` un correo
+    //                   "Activate Form" que hay que abrir y aceptar.
     //   'whatsapp'   -> abre WhatsApp con el mensaje prellenado
     //   'email'      -> abre el programa de correo del visitante con la
     //                   solicitud escrita (solo sale si el visitante la envia)
     //   'endpoint'   -> hace POST al endpoint indicado (Formspree, tu API, etc.)
     // Si eliges 'whatsapp' con mostrarWhatsapp en false, cae solo a 'email'.
-    modoEnvio: 'formsubmit',
+    modoEnvio: 'formsubmit-clasico',
     endpoint: ''                    // Ej: 'https://formspree.io/f/xxxxxxx'
   };
 
@@ -1430,6 +1435,27 @@
   if (!CONFIG.mostrarWhatsapp) {
     $$('.js-whatsapp, .js-wa-wrap').forEach(function (el) { el.style.display = 'none'; });
   }
+
+  /* ---------- Regreso desde FormSubmit (?enviado=1) ----------
+     Tras un envio exitoso, FormSubmit redirige aqui. Se muestra el
+     "Gracias" del formulario de contacto y se limpia la direccion. */
+  if (/[?&]enviado=1(&|$)/.test(location.search)) {
+    var okMsg = $('#form-contacto .js-success');
+    if (okMsg) okMsg.classList.remove('hidden');
+    // Limpia "?enviado=1" de la direccion. En try: si el navegador lo
+    // impide (p. ej. archivo abierto localmente), el resto del script sigue.
+    try { history.replaceState(null, '', location.pathname + '#contacto'); } catch (err) {}
+  }
+
+  // Si el visitante vuelve con el boton "Atras" desde FormSubmit, el
+  // navegador puede restaurar la pagina con el boton en "Enviando...".
+  window.addEventListener('pageshow', function (ev) {
+    if (!ev.persisted) return;
+    $$('.js-full-form button[type="submit"]').forEach(function (b) {
+      b.disabled = false;
+      if (b.getAttribute('data-label')) b.textContent = b.getAttribute('data-label');
+    });
+  });
 
   /* ---------- Navbar: sombra al hacer scroll ---------- */
   var navbar = $('#navbar');
@@ -1546,14 +1572,44 @@
     return out;
   }
 
+  // Crea o actualiza un campo oculto del formulario
+  function setHidden(form, name, value) {
+    var el = form.querySelector('input[type="hidden"][name="' + name + '"]');
+    if (!el) {
+      el = document.createElement('input');
+      el.type = 'hidden';
+      el.name = name;
+      form.appendChild(el);
+    }
+    el.value = value;
+  }
+
   function handleSubmit(e) {
-    e.preventDefault();
     var form = e.currentTarget;
-    if (!validate(form)) return;
+    if (!validate(form)) { e.preventDefault(); return; }
 
     var data = formData(form);
     var btn = form.querySelector('button[type="submit"]');
     var original = btn.textContent;
+    btn.setAttribute('data-label', original);
+
+    // Metodo clasico de FormSubmit: se deja que el navegador envie el
+    // formulario de forma nativa (sin preventDefault). FormSubmit muestra su
+    // propia pagina y despues vuelve aqui con ?enviado=1.
+    if (CONFIG.modoEnvio === 'formsubmit-clasico') {
+      form.action = 'https://formsubmit.co/' + CONFIG.email;
+      form.method = 'POST';
+      setHidden(form, '_subject', 'Cotizacion ' + (data.tipo || 'espacio') + ' - ' + (data.nombre || ''));
+      setHidden(form, '_template', 'table');
+      if (/^https?:$/.test(location.protocol)) {
+        setHidden(form, '_next', location.origin + location.pathname + '?enviado=1#contacto');
+      }
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      return;
+    }
+
+    e.preventDefault();
     btn.disabled = true;
     btn.textContent = 'Enviando...';
 

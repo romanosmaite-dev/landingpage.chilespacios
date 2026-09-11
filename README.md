@@ -60,7 +60,7 @@ var CONFIG = {
   mostrarTelefono: false,         // ← ponlo en true cuando tengas el número
   mostrarWhatsapp: false,         // ← ponlo en true cuando tengas el número
 
-  modoEnvio: 'formsubmit',        // 'formsubmit' | 'whatsapp' | 'email' | 'endpoint'
+  modoEnvio: 'formsubmit-clasico', // 'formsubmit-clasico' | 'formsubmit' | 'whatsapp' | 'email' | 'endpoint'
   endpoint: ''                    // URL del backend si usas 'endpoint'
 };
 ```
@@ -98,7 +98,16 @@ Hay dos formularios (sección de contacto y modal de cotización), ambos con val
 cliente: campos obligatorios, formato de email y de teléfono, mensajes de error
 inline y foco automático en el primer campo con problemas.
 
-**Modo `formsubmit` (el activo hoy):** la solicitud se envía a través de
+**Modo `formsubmit-clasico` (el activo hoy):** el método oficial de FormSubmit.
+Los formularios tienen `action="https://formsubmit.co/<email>"` y `method="POST"`,
+así que funcionan incluso sin JavaScript. Al enviar, el visitante pasa por la página
+de FormSubmit (un captcha anti-spam y, solo la primera vez, el aviso de activación)
+y vuelve a la landing, donde ve el "¡Gracias!". Si cambias el `email` en `CONFIG`,
+el JavaScript actualiza el destino solo; el `action` escrito en el HTML es el respaldo
+para navegadores sin JavaScript, así que conviene cambiarlo también.
+
+**Modo `formsubmit`:** lo mismo, pero por detrás (AJAX), sin salir de la página. La
+solicitud se envía a través de
 [FormSubmit](https://formsubmit.co) y llega directo a la dirección de `email`, con
 nombre, email, teléfono, tipo de espacio y mensaje en una tabla. No requiere cuenta
 ni servidor, y no depende del computador del visitante. Al responder ese correo,
