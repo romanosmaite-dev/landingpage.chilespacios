@@ -60,7 +60,7 @@ var CONFIG = {
   mostrarTelefono: false,         // ← ponlo en true cuando tengas el número
   mostrarWhatsapp: false,         // ← ponlo en true cuando tengas el número
 
-  modoEnvio: 'email',             // 'whatsapp' | 'email' | 'endpoint'
+  modoEnvio: 'formsubmit',        // 'formsubmit' | 'whatsapp' | 'email' | 'endpoint'
   endpoint: ''                    // URL del backend si usas 'endpoint'
 };
 ```
@@ -98,10 +98,24 @@ Hay dos formularios (sección de contacto y modal de cotización), ambos con val
 cliente: campos obligatorios, formato de email y de teléfono, mensajes de error
 inline y foco automático en el primer campo con problemas.
 
-**Modo `email` (el activo hoy):** al enviar, abre el programa de correo del
-visitante con la solicitud ya redactada y dirigida a la dirección de `email`.
-No necesita servidor. Su límite: si la persona no tiene configurado un cliente
-de correo (pasa en varios computadores), no ocurre nada al pulsar el botón.
+**Modo `formsubmit` (el activo hoy):** la solicitud se envía a través de
+[FormSubmit](https://formsubmit.co) y llega directo a la dirección de `email`, con
+nombre, email, teléfono, tipo de espacio y mensaje en una tabla. No requiere cuenta
+ni servidor, y no depende del computador del visitante. Al responder ese correo,
+la respuesta va directo al cliente.
+
+⚠️ **Activación, una sola vez:** la primera solicitud no se entrega. En su lugar,
+FormSubmit manda a `email` un correo con el botón **"Activate Form"**. Hay que
+abrirlo y pulsarlo (revisa Spam si no aparece). Desde ahí llegan todas. Mientras no
+esté activado, el formulario muestra un aviso de "pendiente de activación".
+
+Si cambias el `email`, FormSubmit pedirá activar de nuevo con la dirección nueva.
+Los formularios incluyen un campo oculto `_honey` que FormSubmit usa para descartar
+spam de robots.
+
+**Modo `email`:** abre el programa de correo del visitante con la solicitud ya
+redactada. El mensaje solo sale si la persona lo envía desde ese programa, y si no
+tiene uno configurado no ocurre nada. Por eso ya no es el modo activo.
 
 **Modo `whatsapp`:** abre WhatsApp con la solicitud ya redactada. Se activa solo
 si `mostrarWhatsapp` está en `true`; si no, cae automáticamente a `email`.

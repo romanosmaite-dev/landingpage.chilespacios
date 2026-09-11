@@ -1060,6 +1060,8 @@
       <!-- Formulario completo -->
       <div class="reveal">
         <form id="form-contacto" class="js-full-form rounded-2xl bg-white p-7 sm:p-9 shadow-2xl" novalidate>
+          <!-- Campo trampa anti-spam: invisible para personas, los robots lo llenan -->
+          <input type="text" name="_honey" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <h3 class="text-xl font-extrabold text-gray-900">Solicitar cotizaci&oacute;n</h3>
           <p class="mt-1.5 text-sm text-gray-500">Los campos marcados con <span class="text-brand-600">*</span> son obligatorios.</p>
 
@@ -1254,6 +1256,8 @@
       </header>
 
       <form class="js-full-form px-6 py-6 space-y-5" novalidate>
+        <!-- Campo trampa anti-spam: invisible para personas, los robots lo llenan -->
+        <input type="text" name="_honey" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div>
           <label for="m-nombre" class="block text-sm font-semibold text-gray-800">Nombre completo <span class="text-brand-600">*</span></label>
           <input id="m-nombre" name="nombre" type="text" required autocomplete="name" placeholder="Ej: Camila Soto"
@@ -1389,11 +1393,16 @@
     mostrarWhatsapp: false,
 
     // Modo de envio del formulario:
-    //   'whatsapp' -> abre WhatsApp con el mensaje prellenado (sin servidor)
-    //   'email'    -> abre el correo del visitante con la solicitud escrita
-    //   'endpoint' -> hace POST al endpoint indicado (Formspree, tu API, etc.)
+    //   'formsubmit' -> envia la solicitud por formsubmit.co directo a `email`.
+    //                   No depende del computador del visitante. La PRIMERA
+    //                   vez llega a `email` un correo "Activate Form" que hay
+    //                   que abrir y aceptar; desde ahi llegan todas.
+    //   'whatsapp'   -> abre WhatsApp con el mensaje prellenado
+    //   'email'      -> abre el programa de correo del visitante con la
+    //                   solicitud escrita (solo sale si el visitante la envia)
+    //   'endpoint'   -> hace POST al endpoint indicado (Formspree, tu API, etc.)
     // Si eliges 'whatsapp' con mostrarWhatsapp en false, cae solo a 'email'.
-    modoEnvio: 'email',
+    modoEnvio: 'formsubmit',
     endpoint: ''                    // Ej: 'https://formspree.io/f/xxxxxxx'
   };
 
@@ -1555,32 +1564,64 @@
       btn.disabled = false;
       btn.textContent = original;
     };
-    var fail = function () {
-      alert('No pudimos enviar tu solicitud. Escribenos a ' + CONFIG.email + '.');
+    // Reactiva el boton sin afirmar que la solicitud llego
+    var restore = function () {
       btn.disabled = false;
       btn.textContent = original;
+    };
+    var fail = function (msg) {
+      alert(msg || ('No pudimos enviar tu solicitud. Escribenos a ' + CONFIG.email + '.'));
+      restore();
     };
 
     // WhatsApp solo si esta habilitado; si no, cae a correo.
     var modo = CONFIG.modoEnvio;
     if (modo === 'whatsapp' && !CONFIG.mostrarWhatsapp) modo = 'email';
 
-    if (modo === 'endpoint' && CONFIG.endpoint) {
+    if (modo === 'formsubmit') {
+      // Envio real: FormSubmit reenvia la solicitud a CONFIG.email.
+      // El "Gracias" solo aparece si el servicio confirma el envio.
+      fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CONFIG.email), {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Cotizacion ' + (data.tipo || 'espacio') + ' - ' + (data.nombre || ''),
+          _template: 'table',
+          _captcha: 'false',
+          _honey: data._honey || '',
+          'Nombre': data.nombre || '',
+          'email': data.email || '',            // FormSubmit lo usa como "responder a"
+          'Telefono': data.telefono || '',
+          'Espacio de interes': data.tipo || '',
+          'Mensaje': data.mensaje || ''
+        })
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (json) {
+          if (res.ok && String(json.success) === 'true') return done();
+          if (/activ/i.test(json.message || '')) {
+            // Pasa solo antes de activar el formulario desde el correo
+            return fail('Formulario pendiente de activacion: revisa la bandeja de ' +
+                        CONFIG.email + ' y pulsa "Activate Form" en el correo de FormSubmit.');
+          }
+          fail();
+        });
+      }).catch(function () { fail(); });
+    } else if (modo === 'endpoint' && CONFIG.endpoint) {
       fetch(CONFIG.endpoint, {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-      }).then(function (res) { if (!res.ok) throw new Error('Error de envio'); done(); }).catch(fail);
+      }).then(function (res) { if (!res.ok) throw new Error('Error de envio'); done(); }).catch(function () { fail(); });
     } else if (modo === 'whatsapp') {
-      // Sin backend: derivamos la solicitud a WhatsApp con el mensaje prellenado
+      // Abre WhatsApp con el mensaje prellenado; el envio lo hace el visitante
       window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(buildMessage(data)), '_blank', 'noopener');
-      done();
+      restore();
     } else {
-      // Sin backend ni WhatsApp: abrimos el correo del visitante ya redactado
+      // Abre el correo del visitante ya redactado; el envio lo hace el visitante
       window.location.href = 'mailto:' + CONFIG.email +
         '?subject=' + encodeURIComponent('Cotizacion ' + (data.tipo || 'espacio') + ' - ' + (data.nombre || '')) +
         '&body=' + encodeURIComponent(buildMessage(data));
-      done();
+      restore();
     }
   }
 
