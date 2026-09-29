@@ -1428,7 +1428,9 @@
     // false = el cliente vuelve directo al "Gracias", sin pantalla intermedia.
     // Si empiezan a llegar cotizaciones de spam, cambialo a true.
     captchaFormSubmit: false,
-    endpoint: ''                    // Ej: 'https://formspree.io/f/xxxxxxx'
+    // Funcion propia del sitio. Para activarla, pon modoEnvio: 'endpoint'
+    // (requiere la variable RESEND_API_KEY configurada en Vercel).
+    endpoint: '/api/cotizacion'
   };
 
   var $  = function (s, c) { return (c || document).querySelector(s); };
@@ -1662,10 +1664,10 @@
     var modo = CONFIG.modoEnvio;
     if (modo === 'whatsapp' && !CONFIG.mostrarWhatsapp) modo = 'email';
 
-    if (modo === 'formsubmit') {
-      // Envio en segundo plano: el visitante nunca sale de la pagina.
-      // Con limite de 12 segundos: si el servicio no contesta, se avisa en
-      // vez de dejar el boton en "Enviando..." para siempre.
+    // Envia JSON en segundo plano, con limite de espera de 12 segundos y un
+    // unico cierre garantizado, para que exito, error y tiempo agotado no se
+    // pisen entre si. El visitante nunca sale de la pagina.
+    var enviar = function (url, payload, veredicto) {
       var terminado = false;
       var ctrl = window.AbortController ? new AbortController() : null;
       var acabar = function (fn, msg) {
@@ -1679,40 +1681,56 @@
         acabar(fail, 'El servicio de envio no respondio en 12 segundos.');
       }, 12000);
 
-      fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CONFIG.email), {
+      fetch(url, {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         signal: ctrl ? ctrl.signal : undefined,
-        body: JSON.stringify({
-          _subject: 'Cotizacion ' + (data.tipo || 'espacio') + ' - ' + (data.nombre || ''),
-          _template: 'table',
-          _captcha: 'false',
-          _honey: data._honey || '',
-          'Nombre': data.nombre || '',
-          'email': data.email || '',            // FormSubmit lo usa como "responder a"
-          'Telefono': data.telefono || '',
-          'Espacio de interes': data.tipo || '',
-          'Mensaje': data.mensaje || ''
-        })
+        body: JSON.stringify(payload)
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (json) {
-          if (res.ok && String(json.success) === 'true') return acabar(done);
-          if (/activ/i.test(json.message || '')) {
-            // Pasa solo antes de activar el formulario desde el correo
-            return acabar(fail, 'Formulario pendiente de activacion: revisa la bandeja de ' +
-                          CONFIG.email + ' y pulsa "Activate Form" en el correo de FormSubmit.');
-          }
-          acabar(fail, json.message || 'Respuesta inesperada del servicio de envio.');
+          var r = veredicto(res, json);
+          if (r === true) return acabar(done);
+          acabar(fail, r);
         });
       }).catch(function (err) {
         acabar(fail, 'No se pudo contactar el servicio de envio: ' + err);
       });
-    } else if (modo === 'endpoint' && CONFIG.endpoint) {
-      fetch(CONFIG.endpoint, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      }).then(function (res) { if (!res.ok) throw new Error('Error de envio'); done(); }).catch(function () { fail(); });
+    };
+
+    if (modo === 'endpoint' && CONFIG.endpoint) {
+      // Funcion propia del sitio (/api/cotizacion): recibe la solicitud en
+      // nuestro dominio y la reenvia por correo. Sin servicios de formularios.
+      enviar(CONFIG.endpoint, {
+        nombre: data.nombre || '',
+        email: data.email || '',
+        telefono: data.telefono || '',
+        tipo: data.tipo || '',
+        mensaje: data.mensaje || '',
+        _honey: data._honey || ''
+      }, function (res, json) {
+        if (res.ok && json.success !== false) return true;
+        return json.error || ('El servidor respondio ' + res.status + '.');
+      });
+    } else if (modo === 'formsubmit') {
+      enviar('https://formsubmit.co/ajax/' + encodeURIComponent(CONFIG.email), {
+        _subject: 'Cotizacion ' + (data.tipo || 'espacio') + ' - ' + (data.nombre || ''),
+        _template: 'table',
+        _captcha: 'false',
+        _honey: data._honey || '',
+        'Nombre': data.nombre || '',
+        'email': data.email || '',            // FormSubmit lo usa como "responder a"
+        'Telefono': data.telefono || '',
+        'Espacio de interes': data.tipo || '',
+        'Mensaje': data.mensaje || ''
+      }, function (res, json) {
+        if (res.ok && String(json.success) === 'true') return true;
+        if (/activ/i.test(json.message || '')) {
+          // Pasa solo antes de activar el formulario desde el correo
+          return 'Formulario pendiente de activacion: revisa la bandeja de ' +
+                 CONFIG.email + ' y pulsa "Activate Form" en el correo de FormSubmit.';
+        }
+        return json.message || 'Respuesta inesperada del servicio de envio.';
+      });
     } else if (modo === 'whatsapp') {
       // Abre WhatsApp con el mensaje prellenado; el envio lo hace el visitante
       window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(buildMessage(data)), '_blank', 'noopener');

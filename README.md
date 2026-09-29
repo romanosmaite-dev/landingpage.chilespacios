@@ -302,7 +302,55 @@ la configuración de colores a un `tailwind.config.js`.
 
 ---
 
-## 11. Publicación: GitHub + Vercel
+## 11. Envío propio con Resend (sin servicio de formularios)
+
+`api/cotizacion.js` es una **función serverless de Vercel**: vive en tu propio
+dominio (`https://www.chilespacios.cl/api/cotizacion`), recibe la cotización y la
+reenvía por correo usando [Resend](https://resend.com). Ningún servicio de
+formularios recibe ni guarda los datos de tus clientes.
+
+No tiene dependencias: usa el `fetch` que ya trae Node en Vercel, así que el
+proyecto sigue sin `package.json` ni `node_modules`.
+
+### Puesta en marcha (una sola vez)
+
+1. **Crear cuenta** en [resend.com](https://resend.com).
+2. **Verificar el dominio** `chilespacios.cl` en Resend. Te pedirá agregar unos
+   registros DNS; como el DNS está en Vercel (`ns1.vercel-dns.com`), se agregan
+   desde el panel de Vercel, en el dominio. Esto permite que los correos salgan
+   desde `cotizaciones@chilespacios.cl` y no caigan en spam.
+3. **Crear una API key** en Resend.
+4. **Guardarla en Vercel**, en Settings → Environment Variables. La clave se pega
+   ahí y **nunca** en el código ni en GitHub:
+
+| Variable | Obligatoria | Valor |
+|---|---|---|
+| `RESEND_API_KEY` | sí | la clave que da Resend (`re_...`) |
+| `MAIL_TO` | no | destino; por defecto `contactochilespacios@gmail.com` |
+| `MAIL_FROM` | no | remitente; por defecto `onboarding@resend.dev`. Una vez verificado el dominio, ponlo como `Chilespacios <cotizaciones@chilespacios.cl>` |
+
+5. **Activar el modo** en `CONFIG`: cambia `modoEnvio` a `'endpoint'`. El campo
+   `endpoint` ya apunta a `/api/cotizacion`.
+
+> Mientras no verifiques el dominio (paso 2), puedes probar igual: Resend permite
+> enviar desde `onboarding@resend.dev`, que es el valor por defecto.
+
+### Qué hace la función
+
+- Solo acepta `POST`; cualquier otro método responde 405.
+- Descarta robots con el campo trampa `_honey`, respondiendo "éxito" para que no
+  se den cuenta, pero sin enviar nada.
+- Valida que vengan nombre, email y teléfono, y que el email tenga forma válida.
+- Escapa el contenido antes de armar el correo, para que nadie pueda inyectar
+  HTML a través del formulario.
+- Pone el correo del cliente como **"responder a"**: al responder el correo desde
+  Gmail, la respuesta le llega directo a él.
+- Si algo falla, lo registra en los logs de Vercel y devuelve un mensaje genérico,
+  sin exponer detalles internos.
+
+---
+
+## 12. Publicación: GitHub + Vercel
 
 El proyecto ya es un repositorio git (rama `main`) con el primer commit hecho.
 Para publicarlo:
