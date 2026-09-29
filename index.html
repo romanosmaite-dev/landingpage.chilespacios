@@ -1127,6 +1127,14 @@
           <div class="js-success mt-5 hidden rounded-xl bg-brand-50 p-4 text-sm font-semibold text-brand-800 ring-1 ring-brand-200" role="status">
             &iexcl;Gracias! Recibimos tu solicitud. Te contactaremos a la brevedad.
           </div>
+
+          <!-- Aviso si el servicio de envio falla: la solicitud no se pierde,
+               el visitante tiene el correo a mano para escribir directo. -->
+          <div class="js-fail mt-5 hidden rounded-xl bg-red-50 p-4 text-sm font-medium text-red-800 ring-1 ring-red-200" role="alert">
+            No pudimos enviar tu solicitud. Escr&iacute;benos directamente a
+            <a href="mailto:contactochilespacios@gmail.com" class="js-mail font-bold underline"><span class="js-mail-label">contactochilespacios@gmail.com</span></a>
+            o vuelve a intentarlo en unos minutos.
+          </div>
         </form>
       </div>
 
@@ -1310,6 +1318,13 @@
         <div class="js-success hidden rounded-xl bg-brand-50 p-4 text-sm font-semibold text-brand-800 ring-1 ring-brand-200" role="status">
           &iexcl;Gracias! Recibimos tu solicitud. Te contactaremos a la brevedad.
         </div>
+
+        <!-- Aviso si el servicio de envio falla -->
+        <div class="js-fail hidden rounded-xl bg-red-50 p-4 text-sm font-medium text-red-800 ring-1 ring-red-200" role="alert">
+          No pudimos enviar tu solicitud. Escr&iacute;benos directamente a
+          <a href="mailto:contactochilespacios@gmail.com" class="js-mail font-bold underline"><span class="js-mail-label">contactochilespacios@gmail.com</span></a>
+          o vuelve a intentarlo en unos minutos.
+        </div>
       </form>
     </div>
   </div>
@@ -1407,7 +1422,7 @@
     //                   solicitud escrita (solo sale si el visitante la envia)
     //   'endpoint'   -> hace POST al endpoint indicado (Formspree, tu API, etc.)
     // Si eliges 'whatsapp' con mostrarWhatsapp en false, cae solo a 'email'.
-    modoEnvio: 'formsubmit-clasico',
+    modoEnvio: 'formsubmit',
 
     // Casilla "No soy un robot" de FormSubmit (modo clasico).
     // false = el cliente vuelve directo al "Gracias", sin pantalla intermedia.
@@ -1621,6 +1636,8 @@
 
     var done = function () {
       var success = form.querySelector('.js-success');
+      var failBox = form.querySelector('.js-fail');
+      if (failBox) failBox.classList.add('hidden');
       if (success) success.classList.remove('hidden');
       form.reset();
       btn.disabled = false;
@@ -1631,8 +1648,13 @@
       btn.disabled = false;
       btn.textContent = original;
     };
+    // Muestra el aviso de error DENTRO del formulario, con el correo a mano,
+    // para que la solicitud no se pierda si el servicio de envio falla.
     var fail = function (msg) {
-      alert(msg || ('No pudimos enviar tu solicitud. Escribenos a ' + CONFIG.email + '.'));
+      var failBox = form.querySelector('.js-fail');
+      if (msg) { try { console.warn('Envio fallido:', msg); } catch (err) {} }
+      if (failBox) failBox.classList.remove('hidden');
+      else alert('No pudimos enviar tu solicitud. Escribenos a ' + CONFIG.email + '.');
       restore();
     };
 
@@ -1641,11 +1663,26 @@
     if (modo === 'whatsapp' && !CONFIG.mostrarWhatsapp) modo = 'email';
 
     if (modo === 'formsubmit') {
-      // Envio real: FormSubmit reenvia la solicitud a CONFIG.email.
-      // El "Gracias" solo aparece si el servicio confirma el envio.
+      // Envio en segundo plano: el visitante nunca sale de la pagina.
+      // Con limite de 12 segundos: si el servicio no contesta, se avisa en
+      // vez de dejar el boton en "Enviando..." para siempre.
+      var terminado = false;
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var acabar = function (fn, msg) {
+        if (terminado) return;
+        terminado = true;
+        clearTimeout(reloj);
+        fn(msg);
+      };
+      var reloj = setTimeout(function () {
+        if (ctrl) ctrl.abort();
+        acabar(fail, 'El servicio de envio no respondio en 12 segundos.');
+      }, 12000);
+
       fetch('https://formsubmit.co/ajax/' + encodeURIComponent(CONFIG.email), {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        signal: ctrl ? ctrl.signal : undefined,
         body: JSON.stringify({
           _subject: 'Cotizacion ' + (data.tipo || 'espacio') + ' - ' + (data.nombre || ''),
           _template: 'table',
@@ -1659,15 +1696,17 @@
         })
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (json) {
-          if (res.ok && String(json.success) === 'true') return done();
+          if (res.ok && String(json.success) === 'true') return acabar(done);
           if (/activ/i.test(json.message || '')) {
             // Pasa solo antes de activar el formulario desde el correo
-            return fail('Formulario pendiente de activacion: revisa la bandeja de ' +
-                        CONFIG.email + ' y pulsa "Activate Form" en el correo de FormSubmit.');
+            return acabar(fail, 'Formulario pendiente de activacion: revisa la bandeja de ' +
+                          CONFIG.email + ' y pulsa "Activate Form" en el correo de FormSubmit.');
           }
-          fail();
+          acabar(fail, json.message || 'Respuesta inesperada del servicio de envio.');
         });
-      }).catch(function () { fail(); });
+      }).catch(function (err) {
+        acabar(fail, 'No se pudo contactar el servicio de envio: ' + err);
+      });
     } else if (modo === 'endpoint' && CONFIG.endpoint) {
       fetch(CONFIG.endpoint, {
         method: 'POST',
