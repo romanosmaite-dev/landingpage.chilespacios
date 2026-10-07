@@ -250,15 +250,16 @@ mínimo de accesibilidad y se lee mal en pantallas con brillo bajo.
 | # | Sección | `id` |
 |---|---|---|
 | 1 | Header / Navbar sticky (blanco) | — |
-| 2 | Hero + formulario express | `#inicio` |
-| 3 | Seguridad y confianza (3 tarjetas) | `#seguridad` |
-| 4 | **Nuestro Condominio (galería)** | `#condominio` |
+| 2 | Hero + foto aérea del recinto | `#inicio` |
+| 3 | Seguridad y confianza (4 tarjetas) | `#seguridad` |
+| 4 | Nuestro Condominio (galería) | `#condominio` |
 | 5 | Bodegas Industriales (B2B) | `#industriales` |
 | 6 | Minibodegas — planes | `#minibodegas` |
 | 7 | Servicios logísticos | `#servicios` |
-| 8 | Ubicación + mapa | `#ubicacion` |
-| 9 | Formulario de cotización | `#contacto` |
-| 10 | Footer | — |
+| 8 | **Compromiso medioambiental (planta solar)** | `#medioambiente` |
+| 9 | Ubicación + mapa | `#ubicacion` |
+| 10 | Formulario de cotización | `#contacto` |
+| 11 | Footer | — |
 
 Cada sección está delimitada por un comentario de bloque en el HTML, en el mismo
 orden, para que sea fácil extraerlas como componentes si más adelante se migra a
