@@ -13,6 +13,9 @@ desktop.ini
 *.tmp
 ~$*
 
+# Originales sin optimizar de las fotos (se conservan solo en tu computador)
+img/*-original.*
+
 # Vercel (se crea si alguna vez se usa la CLI de Vercel)
 .vercel/
 

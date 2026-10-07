@@ -43,9 +43,11 @@ FOTO DEL HERO: vista-satelital.jpg
 El Hero (la primera pantalla) muestra esta foto, al costado del titulo.
 Ya esta cargada y funcionando: 819x1024 px, 170 KB.
 
-El marco es VERTICAL, proporcion 4:5 (por ejemplo 800x1000 o 1200x1500).
-La imagen actual calza exacto, asi que no se recorta nada. Si la cambias
-por una apaisada, se recortaran los costados.
+El marco es APAISADO: 16:9 en celular (se ve la foto completa) y 4:3 en
+pantallas grandes (se recortan un poco los costados). Lo importante de la
+foto conviene que quede al centro.
+
+La foto actual es una toma aerea del condominio, de 1400x788 px.
 
 OJO CON EL NOMBRE: debe ser todo en minusculas.
 El archivo llego como "Vista-satelital.jpg", con V mayuscula. En Windows
