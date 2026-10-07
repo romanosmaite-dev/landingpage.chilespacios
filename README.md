@@ -253,12 +253,12 @@ mínimo de accesibilidad y se lee mal en pantallas con brillo bajo.
 | 2 | Hero + foto aérea del recinto | `#inicio` |
 | 3 | Seguridad y confianza (4 tarjetas) | `#seguridad` |
 | 4 | **Compromiso medioambiental (planta solar)** | `#medioambiente` |
-| 5 | Nuestro Condominio (galería) | `#condominio` |
-| 6 | Bodegas Industriales (B2B) | `#industriales` |
-| 7 | Minibodegas — planes | `#minibodegas` |
-| 8 | Servicios logísticos | `#servicios` |
-| 9 | Ubicación + mapa | `#ubicacion` |
-| 10 | Formulario de cotización | `#contacto` |
+| 5 | Bodegas Industriales (B2B) | `#industriales` |
+| 6 | Minibodegas — planes | `#minibodegas` |
+| 7 | Servicios logísticos | `#servicios` |
+| 8 | Ubicación + mapa | `#ubicacion` |
+| 9 | Formulario de cotización | `#contacto` |
+| 10 | Nuestro Condominio (galería) | `#condominio` |
 | 11 | Footer | — |
 
 Cada sección está delimitada por un comentario de bloque en el HTML, en el mismo
