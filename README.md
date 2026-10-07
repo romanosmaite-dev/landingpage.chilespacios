@@ -252,11 +252,11 @@ mínimo de accesibilidad y se lee mal en pantallas con brillo bajo.
 | 1 | Header / Navbar sticky (blanco) | — |
 | 2 | Hero + foto aérea del recinto | `#inicio` |
 | 3 | Seguridad y confianza (4 tarjetas) | `#seguridad` |
-| 4 | Nuestro Condominio (galería) | `#condominio` |
-| 5 | Bodegas Industriales (B2B) | `#industriales` |
-| 6 | Minibodegas — planes | `#minibodegas` |
-| 7 | Servicios logísticos | `#servicios` |
-| 8 | **Compromiso medioambiental (planta solar)** | `#medioambiente` |
+| 4 | **Compromiso medioambiental (planta solar)** | `#medioambiente` |
+| 5 | Nuestro Condominio (galería) | `#condominio` |
+| 6 | Bodegas Industriales (B2B) | `#industriales` |
+| 7 | Minibodegas — planes | `#minibodegas` |
+| 8 | Servicios logísticos | `#servicios` |
 | 9 | Ubicación + mapa | `#ubicacion` |
 | 10 | Formulario de cotización | `#contacto` |
 | 11 | Footer | — |
